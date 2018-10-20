@@ -77,7 +77,7 @@ print_cell(C):-
     write('  ').
 
 display_separator:-
-    gen_line(56, SeperatorLineList, 111),
+    gen_line(56, SeperatorLineList, -1),
     display_line(SeperatorLineList).
     
 
@@ -87,7 +87,6 @@ gen_column_labels(Size, List, LabelNr):-
     NextLabelNr is LabelNr + 1,
     gen_column_labels(Size1, List1, NextLabelNr),
     List = [LabelNr | List1].
-
 
 
 gen_line(0, [], _).
@@ -102,5 +101,5 @@ traducao(1, 9634).
 traducao(2, 9711).
 traducao(3, 9635).
 traducao(4, 9673).
-traducao(111, 9472).
+traducao(-1, 9472).
 traducao(Val, Translated):-Translated is Val.
