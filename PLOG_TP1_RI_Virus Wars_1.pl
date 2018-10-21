@@ -1,3 +1,4 @@
+%displays a game for the given board
 display_game(Board, Player):-
     nl,
     length(Board, Length),
@@ -6,6 +7,18 @@ display_game(Board, Player):-
     display_separator,
     display_matrix(Board, 0).
 
+%abstractions for game states demo
+display_start_game:-
+    start_gameplay(Board),
+    display_game(Board, Player).
+display_mid_game:-
+    mid_gameplay(Board),
+    display_game(Board, Player).
+display_final_game:-
+    final_gameplay(Board),
+    display_game(Board, Player).
+    
+%generates start board
 start_gameplay(L):-
     L = [
         [1,0,0,0,0,0,0,0,0,0,0],
@@ -20,7 +33,7 @@ start_gameplay(L):-
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,2]
     ].
-
+%generates mid-game board
 mid_gameplay(L):-
     L = [
         [1,1,3,0,0,0,0,0,0,0,0],
@@ -36,6 +49,7 @@ mid_gameplay(L):-
         [0,0,0,0,0,0,0,0,0,0,2]
     ].
 
+%generates end board
 final_gameplay(L):-
     L = [
         [1,1,3,0,0,0,0,0,0,0,0],
@@ -51,6 +65,7 @@ final_gameplay(L):-
         [0,0,0,0,0,0,0,0,0,0,3]
     ].
 
+%displays a matrix representing a board
 display_matrix([], _).
 display_matrix([H | T], LineNumber):-
     display_separated_line(H, LineNumber),
@@ -58,17 +73,20 @@ display_matrix([H | T], LineNumber):-
     LineNumber1 is LineNumber+1,
     display_matrix(T, LineNumber1).
 
+%displays a line with vertical separators
 display_separated_line([], LineNumber):- write('|  '), write(LineNumber), nl.
 display_separated_line([H | T], LineNumber):-
     print_cell(H),
     display_separated_line(T, LineNumber).
 
+%displays a line without separators
 display_line([]):- nl.
 display_line([H | T]):-
     traducao(H, X),
     put_code(X),
     display_line(T).
 
+%prints a translated cell
 print_cell(C):-
     write('|'),
     traducao(C, X),
@@ -76,11 +94,12 @@ print_cell(C):-
     put_code(X),
     write('  ').
 
+%prints an horizontal separator
 display_separator:-
     gen_line(56, SeperatorLineList, -1),
     display_line(SeperatorLineList).
     
-
+%generates the column labels
 gen_column_labels(0, [], _).
 gen_column_labels(Size, List, LabelNr):-
     Size1 is Size - 1,
@@ -88,14 +107,14 @@ gen_column_labels(Size, List, LabelNr):-
     gen_column_labels(Size1, List1, NextLabelNr),
     List = [LabelNr | List1].
 
-
+%generates a line of n given chars
 gen_line(0, [], _).
 gen_line(Size, List, Value):-
     Size1 is Size - 1,
     gen_line(Size1, List1, Value),
     List = [Value | List1].
 
-
+%define translations
 traducao(0, 32).
 traducao(1, 9634).
 traducao(2, 9711).
