@@ -3,7 +3,7 @@ display_game(Board, Player):-
     nl,
     length(Board, Length),
     gen_column_labels(Length, Labels, 65),
-    display_separated_line(Labels, ''),
+    write(' '), display_separated_line(Labels, '', ' '),
     display_separator,
     display_matrix(Board, 0).
 
@@ -68,16 +68,16 @@ final_gameplay(L):-
 %displays a matrix representing a board
 display_matrix([], _).
 display_matrix([H | T], LineNumber):-
-    display_separated_line(H, LineNumber),
+    display_separated_line(H, LineNumber, '|'),
     display_separator,
     LineNumber1 is LineNumber+1,
     display_matrix(T, LineNumber1).
 
 %displays a line with vertical separators
-display_separated_line([], LineNumber):- write('|  '), write(LineNumber), nl.
-display_separated_line([H | T], LineNumber):-
-    print_cell(H),
-    display_separated_line(T, LineNumber).
+display_separated_line([], LineNumber, SeparatorStr):- write(SeparatorStr), write('  '), write(LineNumber), nl.
+display_separated_line([H | T], LineNumber, SeparatorStr):-
+    print_cell(H, SeparatorStr),
+    display_separated_line(T, LineNumber, SeparatorStr).
 
 %displays a line without separators
 display_line([]):- nl.
@@ -87,8 +87,8 @@ display_line([H | T]):-
     display_line(T).
 
 %prints a translated cell
-print_cell(C):-
-    write('|'),
+print_cell(C, SeparatorStr):-
+    write(SeparatorStr),
     traducao(C, X),
     write(' '),
     put_code(X),
