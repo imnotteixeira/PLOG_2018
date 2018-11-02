@@ -12,23 +12,27 @@ display_game(Board, Player):-
     PlayerNumber is Player + 1,
     write(PlayerNumber),
     write('\'s turn.'), nl,
+    !,
     readCoordinatesAndUpdateMatrix(Board, NewBoard, Player),
+    !,
     NextPlayer is ((Player + 1) mod 2),
     display_game(NewBoard, NextPlayer).
 
 readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):-
-    write('Insere as coordenadas da tua proxima jogada <A-K, 0-10>:'),
+    write('Insere as coordenadas da tua proxima jogada <A-K 0-10 .>:'),
     get_code(X1),
-    get_code(Y1),
+    read(Y),
     get_code(_),
+    number(Y),
+    !,
     X is X1 - "A",
-    Y is Y1 - "0",
     write('O X e '),
     write(X),
     write(' e o Y e '),
     write(Y),
     update_matrix_at(Matrix, NewMatrix, X, Y, 3).
 
+readCoordinatesAndUpdateMatrix(_,_,_):- write('Read error'),nl, fail.
 
 %abstractions for game states demo
 display_start_game:-
