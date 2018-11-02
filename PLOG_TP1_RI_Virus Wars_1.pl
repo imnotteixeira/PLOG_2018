@@ -1,3 +1,5 @@
+:- consult('replacer.pl').
+
 %displays a game for the given board
 display_game(Board, Player):-
     nl,
@@ -5,18 +7,39 @@ display_game(Board, Player):-
     gen_column_labels(Length, Labels, 65),
     write(' '), display_separated_line(Labels, '', ' '),
     display_separator,
-    display_matrix(Board, 0).
+    display_matrix(Board, 0),
+    write('Player '),
+    PlayerNumber is Player + 1,
+    write(PlayerNumber),
+    write('\'s turn.'), nl,
+    readCoordinatesAndUpdateMatrix(Board, NewBoard, Player),
+    NextPlayer is ((Player + 1) mod 2),
+    display_game(NewBoard, NextPlayer).
+
+readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):-
+    write('Insere as coordenadas da tua proxima jogada <A-K, 0-10>:'),
+    get_code(X1),
+    get_code(Y1),
+    get_code(_),
+    X is X1 - "A",
+    Y is Y1 - "0",
+    write('O X e '),
+    write(X),
+    write(' e o Y e '),
+    write(Y),
+    update_matrix_at(Matrix, NewMatrix, X, Y, 3).
+
 
 %abstractions for game states demo
 display_start_game:-
     start_gameplay(Board),
-    display_game(Board, Player).
+    display_game(Board, 0).
 display_mid_game:-
     mid_gameplay(Board),
-    display_game(Board, Player).
+    display_game(Board, 1).
 display_final_game:-
     final_gameplay(Board),
-    display_game(Board, Player).
+    display_game(Board, 0).
     
 %generates start board
 start_gameplay(L):-
@@ -115,10 +138,10 @@ gen_line(Size, List, Value):-
     List = [Value | List1].
 
 %define translations
-traducao(0, 32).
-traducao(1, 9634).
-traducao(2, 9711).
-traducao(3, 9635).
-traducao(4, 9673).
-traducao(-1, 9472).
+traducao(0, 32). %space
+traducao(1, 9634). %square
+traducao(2, 9711). %ball
+traducao(3, 9635). %filled square
+traducao(4, 9673). %filled ball
+traducao(-1, 9472). %horizontal line
 traducao(Val, Translated):-Translated is Val.

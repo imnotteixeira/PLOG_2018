@@ -9,7 +9,7 @@ update_matrix_at(Matrix, Result, X, Y, NewVal):-
     replace_at(Line, NewLine, X, NewVal),
     replace_at(Matrix, Result, Y, NewLine).
 
-update_matrix_at(Matrix, Result, X, Y, NewVal):-
+update_matrix_at(_, _, _, _, _):-
     nl, write('Trying to replace value with Y coordinate out of bounds!'), nl, fail.
 
 replace_at(SourceList, DestList, N, NewVal):-
