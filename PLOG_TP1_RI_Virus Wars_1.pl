@@ -1,4 +1,5 @@
 :- consult('replacer.pl').
+:- consult('game_rules.pl').
 
 %displays a game for the given board
 display_game(Board, Player):-
@@ -12,9 +13,7 @@ display_game(Board, Player):-
     PlayerNumber is Player + 1,
     write(PlayerNumber),
     write('\'s turn.'), nl,
-    !,
     readCoordinatesAndUpdateMatrix(Board, NewBoard, Player),
-    !,
     NextPlayer is ((Player + 1) mod 2),
     display_game(NewBoard, NextPlayer).
 
@@ -23,16 +22,14 @@ readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):-
     get_code(X1),
     read(Y),
     get_code(_),
-    number(Y),
-    !,
+    integer(Y),
     X is X1 - "A",
-    write('O X e '),
-    write(X),
-    write(' e o Y e '),
-    write(Y),
-    update_matrix_at(Matrix, NewMatrix, X, Y, 3).
+    write('O X e '), write(X), write(' e o Y e '),write(Y),nl,
+    validatePlay(Player, X, Y, Matrix),
+    getPlayerNewElem(Player, X, Y, Matrix, NewElem), 
+    update_matrix_at(Matrix, NewMatrix, X, Y, NewElem).
 
-readCoordinatesAndUpdateMatrix(_,_,_):- write('Read error'),nl, fail.
+readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):- write('That is not a valid move'),nl, readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player).
 
 %abstractions for game states demo
 display_start_game:-
