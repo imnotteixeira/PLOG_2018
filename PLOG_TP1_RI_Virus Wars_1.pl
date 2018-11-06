@@ -1,6 +1,8 @@
 :- consult('replacer.pl').
 :- consult('game_rules.pl').
 
+
+
 %displays a game for the given board
 display_game(Board, Player):-
     nl,
@@ -30,6 +32,12 @@ readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):-
     update_matrix_at(Matrix, NewMatrix, X, Y, NewElem).
 
 readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):- write('That is not a valid move'),nl, readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player).
+
+
+test_adj(B, Player, L):-
+    mid_gameplay(B),
+    setof(X-Y, (X < 11, Y < 11, has_elem_up(Player, X, Y, B)), L).
+
 
 %abstractions for game states demo
 display_start_game:-
