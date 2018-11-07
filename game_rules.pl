@@ -1,13 +1,13 @@
 :- use_module(library(lists)).
 
 valid_moves(Board, Player, ListOfMoves):-
-    setof(X-Y, valid_move(Board, Player, X, Y), ListOfMoves).
+    setof(X-Y, valid_move(Board, Player-X-Y), ListOfMoves).
 
-valid_move(Board, Player, X, Y):-
+valid_move(Board, Player-X-Y):-
     available_cell(X, Y, Board),
     has_adjacent(Player, X, Y, Board).
 
-valid_move(Board, Player, X, Y):-
+valid_move(Board, Player-X-Y):-
     enemy_non_zombie(Player, X, Y, Board),
     has_adjacent(Player, X, Y, Board).
 
