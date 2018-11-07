@@ -20,17 +20,11 @@ enemy_non_zombie(Player, X, Y, Board):-
     nth0(Y, Board, YElem),
     nth0(X, YElem, EnemyNonZombie).
 
-winner(Board, Player):-
-    Enemy is (Player + 1) mod 2,
-    \+ valid_moves(Board, Enemy, EnemyMoves).
+game_over(Board, 0) :-
+    \+ valid_moves(Board, 1, _EnemyMoves).
 
-game_over(Board, Winner):-
-    winner(Board, 0),
-    Winner is 0.
-
-game_over(Board, Winner):-
-    winner(Board, 1),
-    Winner is 1.
+game_over(Board, 1) :-
+    \+ valid_moves(Board, 0, _EnemyMoves).
 
 
 
