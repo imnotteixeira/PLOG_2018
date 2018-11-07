@@ -15,8 +15,13 @@ available_cell(X, Y, Board):-
     nth0(Y, Board, YElem),
     nth0(X, YElem, 0).
 
+enemy_non_zombie(Player, EnemyNonZombie):-
+    enemy(Player, Enemy),
+    non_zombie(Enemy, EnemyNonZombie).
+
+
 enemy_non_zombie(Player, X, Y, Board):-
-    EnemyNonZombie is ((Player + 1) mod 2) + 1,
+    enemy_non_zombie(Player, EnemyNonZombie),
     nth0(Y, Board, YElem),
     nth0(X, YElem, EnemyNonZombie).
 
@@ -45,6 +50,18 @@ isZombieInCoords(X, Y, Matrix):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+non_zombie(0, 1).
+zombie(0, 3).
+non_zombie(1, 2).
+zombie(1, 4).
+
+enemy(Player, Enemy):-
+    Enemy is (Player + 1) mod 2.
+
+
+enemy_zombie(0, 4).
+enemy_zombie(1, 3).
 
 isPlayersElementInCoords(Player, X, Y, Matrix):-
     getElementInCoords(Matrix, X, Y, Elem),

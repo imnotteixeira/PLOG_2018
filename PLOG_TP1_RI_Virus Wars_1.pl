@@ -1,6 +1,7 @@
 :- consult('replacer.pl').
 :- consult('game_rules.pl').
 :- consult('move.pl').
+:- consult('value.pl').
 
 
 
