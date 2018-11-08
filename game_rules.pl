@@ -51,10 +51,10 @@ isZombieInCoords(X, Y, Matrix):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-non_zombie(0, 1).
 zombie(0, 3).
-non_zombie(1, 2).
 zombie(1, 4).
+non_zombie(0, 1).
+non_zombie(1, 2).
 
 enemy(Player, Enemy):-
     Enemy is (Player + 1) mod 2.

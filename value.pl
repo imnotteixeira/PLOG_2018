@@ -14,13 +14,6 @@ zombie_value([Row | Tail], Player, Value, Counter):-
     NewCounter is Counter + (RowVal ** 2),
     zombie_value(Tail, Player, Value, NewCounter).
 
-proximity_value([], _Player, Value, Value, _Counter, _Y, _Board).
-
-proximity_value([Row | Tail], Player, Value, Counter, Y, Board):-
-    proximity_row_value(Row, Player, RowVal, 0, 0, Y, Board),
-    NewCounter is Counter + RowVal,
-    NewY is Y +1,
-    proximity_value(Tail, Player, Value, NewCounter, NewY, Board).
 
 
 zombie_row_value([], _Player, RowVal, RowVal, _Curr_Seq).
@@ -40,17 +33,26 @@ zombie_row_value([_ | Tail], Player, RowVal, Max_Seq, _Curr_Seq):-
     zombie_row_value(Tail, Player, RowVal, Max_Seq, 0).
 
 
+proximity_value([], _Player, Value, Value, _Y, _Board).
+
+proximity_value([Row | Tail], Player, Value, Counter, Y, Board):-
+    proximity_row_value(Row, Player, RowVal, 0, 0, Y, Board),
+    NewCounter is Counter + RowVal,
+    NewY is Y + 1,
+    proximity_value(Tail, Player, Value, NewCounter, NewY, Board).
+
+
 proximity_row_value([], _Player, RowVal, RowVal, _CurrX, _CurrY, _Board).
 
-proximity_row_value([Elem | Tail], Player, RowVal, CurrVal, CurrX, CurrY, Board):-
+proximity_row_value([_Elem | Tail], Player, RowVal, CurrVal, CurrX, CurrY, Board):-
     has_enemy_adjacent(Player, CurrX, CurrY, Board),
     New_Curr_Val is CurrVal + 1,
     NewX is CurrX + 1,
     proximity_row_value(Tail, Player, RowVal, New_Curr_Val, NewX, CurrY, Board).
 
-proximity_row_value([_ | Tail], Player, RowVal, CurrVal, CurrX, CurrY):-
+proximity_row_value([_ | Tail], Player, RowVal, CurrVal, CurrX, CurrY, Board):-
     NewX is CurrX + 1,
-    proximity_row_value(Tail, Player, RowVal, CurrVal, NewX, CurrY).
+    proximity_row_value(Tail, Player, RowVal, CurrVal, NewX, CurrY, Board).
 
 
 has_enemy_adjacent(Player, X, Y, Matrix):-
