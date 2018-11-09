@@ -33,10 +33,10 @@ enemy_non_zombie(Player, X, Y, Board):-
     nth0(X, YElem, EnemyNonZombie).
 
 game_over(Board, 0) :-
-    \+ valid_moves(Board, 1, _EnemyMoves).
+    \+ valid_moves(Board, 1, EnemyMoves).
 
 game_over(Board, 1) :-
-    \+ valid_moves(Board, 0, _EnemyMoves).
+    \+ valid_moves(Board, 0, EnemyMoves).
 
 enemy(Player, Enemy):-
     Enemy is (Player + 1) mod 2.
@@ -71,6 +71,67 @@ isPlayersElement(Player, Elem):-
 getElementInCoords(Matrix, X, Y, Elem):-
     nth0(Y, Matrix, YElem),
     nth0(X, YElem, Elem).
+
+djisplai_gami(Board, Player):-
+    nl,
+    length(Board, Length),
+    gen_column_labels(Length, Labels, 65),
+    write(' '), display_separated_line(Labels, '', ' '),
+    display_separator,
+    display_matrix(Board, 0),
+    write('Player '),
+    write(Player),
+    write('\'s turn.'), nl.
+
+
+game(Board, Player1-Type1, Player2-Type2):-
+    djisplai_gami(Board, Player1),
+    game_over(NewBoard, Winner), !,
+    write('Game Over! Winner is Player '),
+    write('Winner'), nl.
+
+game(Board, Player1-Type1, Player2-Type2):-
+    next_move(Player1, Type1, Board, NewBoard),
+    game(NewBoard, Player2-Type2, Player1-Type1).
+
+
+
+%%%%%%%%%%% READ MOVE %%%%%%%%%%%%%%%%
+
+read_move(X, Y):-
+    write('Insert the next play coordinates <A-K><0-10>. :'),
+    get_code(X1),
+    read(Y),
+    get_code(_),
+    integer(Y),
+    X is X1 - "A".
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+human(0).
+random_ai(1).
+beginner_ai(2).
+
+%%%%%%%%%%% GET NEXT MOVE %%%%%%%%%%%%%%%%%
+
+next_move(Player, Type, Board, NewBoard):-
+
+    human(Type), !,
+    read_move(X, Y),
+    move(Player-X-Y, Board, NewBoard).
+
+next_move(Player, Type, X-Y, Board, NewBoard):-
+    random_ai(Type), !,
+    random_move(X, Y),
+    play(Board, Player-X-Y, NewBoard).
+
+next_move(Player, Type, X-Y, Board, NewBoard):-
+    beginner_ai(Type),
+    ai_move(X, Y),
+    play(Board, Player-X-Y, NewBoard).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % %%%%%%%%%%% CHECK AGAINST ADJACENT ELEMENTS %%%%%%%%%%%% %
 
