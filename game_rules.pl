@@ -1,13 +1,20 @@
 :- use_module(library(lists)).
 
-valid_moves(Board, Player, ListOfMoves):-
-    setof(X-Y, valid_move(Board, Player-X-Y), ListOfMoves).
+zombie(0, 3).
+zombie(1, 4).
+non_zombie(0, 1).
+non_zombie(1, 2).
+enemy_zombie(0, 4).
+enemy_zombie(1, 3).
 
-valid_move(Board, Player-X-Y):-
+valid_moves(Board, Player, ListOfMoves):-
+    setof(X-Y, valid_move(Board, Player, X-Y), ListOfMoves).
+
+valid_move(Board, Player, X-Y):-
     available_cell(X, Y, Board),
     has_adjacent(Player, X, Y, Board).
 
-valid_move(Board, Player-X-Y):-
+valid_move(Board, Player, X-Y):-
     enemy_non_zombie(Player, X, Y, Board),
     has_adjacent(Player, X, Y, Board).
 
@@ -31,37 +38,8 @@ game_over(Board, 0) :-
 game_over(Board, 1) :-
     \+ valid_moves(Board, 0, _EnemyMoves).
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% LEGACY CODE  %%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-validatePlay(Player, X, Y, Matrix):-
-    \+ isPlayersElementInCoords(Player, X, Y, Matrix),
-    \+ isZombieInCoords(X, Y, Matrix),
-    has_adjacent(Player, X, Y, Matrix).
-
-isZombieInCoords(X, Y, Matrix):-
-    getElementInCoords(Matrix, X, Y, Elem),
-    Elem > 2.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-zombie(0, 3).
-zombie(1, 4).
-non_zombie(0, 1).
-non_zombie(1, 2).
-
 enemy(Player, Enemy):-
     Enemy is (Player + 1) mod 2.
-
-
-enemy_zombie(0, 4).
-enemy_zombie(1, 3).
 
 isPlayersElementInCoords(Player, X, Y, Matrix):-
     getElementInCoords(Matrix, X, Y, Elem),
@@ -94,7 +72,7 @@ getElementInCoords(Matrix, X, Y, Elem):-
     nth0(Y, Matrix, YElem),
     nth0(X, YElem, Elem).
 
-% %%%%%%%%%%% CHECK ADJACENT ELEMENTS %%%%%%%%%%%% %
+% %%%%%%%%%%% CHECK AGAINST ADJACENT ELEMENTS %%%%%%%%%%%% %
 
 has_adjacent(Player, X, Y, Matrix):-
     RightX is X + 1,

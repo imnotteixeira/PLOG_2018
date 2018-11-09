@@ -28,8 +28,7 @@ readCoordinatesAndUpdateMatrix(Matrix, NewMatrix, Player):-
     get_code(_),
     integer(Y),
     X is X1 - "A",
-    write('O X e '), write(X), write(' e o Y e '),write(Y),nl,
-    validatePlay(Player, X, Y, Matrix),
+    valid_move(Matrix, Player, X-Y),
     getPlayerNewElem(Player, X, Y, Matrix, NewElem), 
     update_matrix_at(Matrix, NewMatrix, X, Y, NewElem).
 
