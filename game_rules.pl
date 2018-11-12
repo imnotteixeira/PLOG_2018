@@ -89,17 +89,23 @@ djisplai_gami(Board, Player):-
     write('\'s turn.'), nl.
 
 
-game(Board, Player1-Type1, Player2-Type2):-
+game(NewBoard, Player1-Type1, Player2-Type2, 0):-
+    game(NewBoard, Player2-Type2, Player1-Type1, 5).
+
+game(Board, Player1-Type1, Player2-Type2, PlayCount):-
     
     game_over(Board, Winner), !,
     djisplai_gami(Board, Player1),
     write('Game Over! Winner is Player '),
     write(Winner), nl.
 
-game(Board, Player1-Type1, Player2-Type2):-
+game(Board, Player1-Type1, Player2-Type2, PlayCount):-
     djisplai_gami(Board, Player1),
+    write(PlayCount),
+    write(' moves left.'), nl,
     next_move(Player1, Type1, Board, NewBoard),
-    game(NewBoard, Player2-Type2, Player1-Type1).
+    NextPlayCount is PlayCount - 1,
+    game(NewBoard, Player1-Type1, Player2-Type2, NextPlayCount).
 
 %%%%%%%%%%% READ MOVE %%%%%%%%%%%%%%%%
 

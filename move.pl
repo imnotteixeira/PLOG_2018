@@ -1,4 +1,5 @@
 :- use_module(library(random)).
+:- use_module(library(system)).
 
 move(Player-X-Y, Board, NewBoard):-
     valid_move(Board, Player, X-Y), !,
@@ -17,7 +18,9 @@ play(Board, Player-X-Y, NewBoard):-
 %%%%%%%%% RANDOM AI %%%%%%%%%%%%%%%%%
 
 random_move(Board, Player, X, Y):-
-    valid_moves(Board, Player, ValidMoves),
+    now(T),
+    setrand(T),
+    valid_moves(Board, Player, ValidMoves), !,
     length(ValidMoves, NMoves),
     random(0, NMoves, Move),
     nth0(Move, ValidMoves, X-Y).
@@ -30,9 +33,7 @@ random_move(Board, Player, X, Y):-
 %%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%
 
 ai_move(Board, Player, X, Y):-
-    write('be4 vmoves'),
-    valid_moves_ordered_by_value(Board, Player, ValidMoves),
-    write('after vmoves'),
+    valid_moves_ordered_by_value(Board, Player, ValidMoves), !, 
     nth0(0, ValidMoves, Value-X-Y).
     
 
