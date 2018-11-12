@@ -8,7 +8,7 @@ enemy_zombie(0, 4).
 enemy_zombie(1, 3).
 
 valid_moves(Board, Player, ListOfMoves):-
-    setof(X-Y, Board^valid_move(Board, Player, X-Y), ListOfMoves).
+    setof(X-Y, valid_move(Board, Player, X-Y), ListOfMoves).
 
 valid_move(Board, Player, X-Y):-
     available_cell(X, Y, Board),
@@ -91,18 +91,15 @@ djisplai_gami(Board, Player):-
 
 game(Board, Player1-Type1, Player2-Type2):-
     
-    djisplai_gami(Board, Player1),
-    write('be4'),
     game_over(Board, Winner), !,
-    write('after'),
+    djisplai_gami(Board, Player1),
     write('Game Over! Winner is Player '),
     write(Winner), nl.
 
 game(Board, Player1-Type1, Player2-Type2):-
+    djisplai_gami(Board, Player1),
     next_move(Player1, Type1, Board, NewBoard),
     game(NewBoard, Player2-Type2, Player1-Type1).
-
-
 
 %%%%%%%%%%% READ MOVE %%%%%%%%%%%%%%%%
 

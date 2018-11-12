@@ -3,8 +3,6 @@
 :- consult('move.pl').
 :- consult('value.pl').
 
-
-
 %displays a game for the given board
 display_game(Board, Player):-
     nl,
