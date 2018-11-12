@@ -127,12 +127,12 @@ next_move(Player, Type, Board, NewBoard):-
 
 next_move(Player, Type, Board, NewBoard):-
     random_ai(Type), !,
-    random_move(X, Y),
+    random_move(Board, Player, X, Y),
     play(Board, Player-X-Y, NewBoard).
 
 next_move(Player, Type, Board, NewBoard):-
     beginner_ai(Type),
-    ai_move(X, Y),
+    ai_move(Board, Player, X, Y),
     play(Board, Player-X-Y, NewBoard).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
