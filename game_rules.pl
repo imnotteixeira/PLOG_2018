@@ -8,7 +8,7 @@ enemy_zombie(0, 4).
 enemy_zombie(1, 3).
 
 valid_moves(Board, Player, ListOfMoves):-
-    setof(X-Y, valid_move(Board, Player, X-Y), ListOfMoves).
+    setof(X-Y, Board^valid_move(Board, Player, X-Y), ListOfMoves).
 
 valid_move(Board, Player, X-Y):-
     available_cell(X, Y, Board),
@@ -69,6 +69,11 @@ isPlayersElement(Player, Elem):-
     Player =:= (Elem + 1) mod 2.
 
 getElementInCoords(Matrix, X, Y, Elem):-
+    length(Matrix, BoardSize),
+    X > -1,
+    Y > -1,
+    X < BoardSize,
+    Y < BoardSize,
     nth0(Y, Matrix, YElem),
     nth0(X, YElem, Elem).
 
@@ -76,7 +81,7 @@ djisplai_gami(Board, Player):-
     nl,
     length(Board, Length),
     gen_column_labels(Length, Labels, 65),
-    write(' '), display_separated_line(Labels, '', ' '),
+    write(' '), display_column_labels(Labels, '', ' '),
     display_separator,
     display_matrix(Board, 0),
     write('Player '),
@@ -85,10 +90,13 @@ djisplai_gami(Board, Player):-
 
 
 game(Board, Player1-Type1, Player2-Type2):-
+    
     djisplai_gami(Board, Player1),
-    game_over(NewBoard, Winner), !,
+    write('be4'),
+    game_over(Board, Winner), !,
+    write('after'),
     write('Game Over! Winner is Player '),
-    write('Winner'), nl.
+    write(Winner), nl.
 
 game(Board, Player1-Type1, Player2-Type2):-
     next_move(Player1, Type1, Board, NewBoard),
@@ -120,12 +128,12 @@ next_move(Player, Type, Board, NewBoard):-
     read_move(X, Y),
     move(Player-X-Y, Board, NewBoard).
 
-next_move(Player, Type, X-Y, Board, NewBoard):-
+next_move(Player, Type, Board, NewBoard):-
     random_ai(Type), !,
     random_move(X, Y),
     play(Board, Player-X-Y, NewBoard).
 
-next_move(Player, Type, X-Y, Board, NewBoard):-
+next_move(Player, Type, Board, NewBoard):-
     beginner_ai(Type),
     ai_move(X, Y),
     play(Board, Player-X-Y, NewBoard).

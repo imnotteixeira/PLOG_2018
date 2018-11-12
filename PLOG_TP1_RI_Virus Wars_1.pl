@@ -112,12 +112,25 @@ display_separated_line([H | T], LineNumber, SeparatorStr):-
     print_cell(H, SeparatorStr),
     display_separated_line(T, LineNumber, SeparatorStr).
 
+%displays a line with column labels with vertical separators
+display_column_labels([], LineNumber, SeparatorStr):- write(SeparatorStr), write('  '), write(LineNumber), nl.
+display_column_labels([H | T], LineNumber, SeparatorStr):-
+    print_cell_no_translate(H, SeparatorStr),
+    display_column_labels(T, LineNumber, SeparatorStr).
+
 %displays a line without separators
 display_line([]):- nl.
 display_line([H | T]):-
     traducao(H, X),
     put_code(X),
     display_line(T).
+
+%prints a non-translated cell
+print_cell_no_translate(C, SeparatorStr):-
+    write(SeparatorStr),
+    write(' '),
+    put_code(C),
+    write('  ').
 
 %prints a translated cell
 print_cell(C, SeparatorStr):-
@@ -126,6 +139,7 @@ print_cell(C, SeparatorStr):-
     write(' '),
     put_code(X),
     write('  ').
+
 
 %prints an horizontal separator
 display_separator:-
@@ -154,4 +168,4 @@ traducao(2, 9711). %ball
 traducao(3, 9635). %filled square
 traducao(4, 9673). %filled ball
 traducao(-1, 9472). %horizontal line
-traducao(Val, Translated):-Translated is Val.
+% traducao(Val, Val).
