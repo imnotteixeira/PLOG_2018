@@ -1,11 +1,19 @@
 :- use_module(library(lists)).
 
+enemy(0, 1).
+enemy(1, 0).
 zombie(0, 3).
 zombie(1, 4).
 non_zombie(0, 1).
 non_zombie(1, 2).
 enemy_zombie(0, 4).
 enemy_zombie(1, 3).
+
+game_over(Board, 0) :-
+    \+ valid_moves(Board, 1, EnemyMoves).
+
+game_over(Board, 1) :-
+    \+ valid_moves(Board, 0, EnemyMoves).
 
 valid_moves(Board, Player, ListOfMoves):-
     setof(X-Y, valid_move(Board, Player, X-Y), ListOfMoves).
@@ -26,20 +34,10 @@ enemy_non_zombie(Player, EnemyNonZombie):-
     enemy(Player, Enemy),
     non_zombie(Enemy, EnemyNonZombie).
 
-
 enemy_non_zombie(Player, X, Y, Board):-
     enemy_non_zombie(Player, EnemyNonZombie),
     nth0(Y, Board, YElem),
     nth0(X, YElem, EnemyNonZombie).
-
-game_over(Board, 0) :-
-    \+ valid_moves(Board, 1, EnemyMoves).
-
-game_over(Board, 1) :-
-    \+ valid_moves(Board, 0, EnemyMoves).
-
-enemy(Player, Enemy):-
-    Enemy is (Player + 1) mod 2.
 
 isPlayersElementInCoords(Player, X, Y, Matrix):-
     getElementInCoords(Matrix, X, Y, Elem),
@@ -76,72 +74,6 @@ getElementInCoords(Matrix, X, Y, Elem):-
     Y < BoardSize,
     nth0(Y, Matrix, YElem),
     nth0(X, YElem, Elem).
-
-djisplai_gami(Board, Player):-
-    nl,
-    length(Board, Length),
-    gen_column_labels(Length, Labels, 65),
-    write(' '), display_column_labels(Labels, '', ' '),
-    display_separator,
-    display_matrix(Board, 0),
-    write('Player '),
-    write(Player),
-    write('\'s turn.'), nl.
-
-
-game(NewBoard, Player1-Type1, Player2-Type2, 0):-
-    game(NewBoard, Player2-Type2, Player1-Type1, 5).
-
-game(Board, Player1-Type1, Player2-Type2, PlayCount):-
-    
-    game_over(Board, Winner), !,
-    djisplai_gami(Board, Player1),
-    write('Game Over! Winner is Player '),
-    write(Winner), nl.
-
-game(Board, Player1-Type1, Player2-Type2, PlayCount):-
-    djisplai_gami(Board, Player1),
-    write(PlayCount),
-    write(' moves left.'), nl,
-    next_move(Player1, Type1, Board, NewBoard),
-    NextPlayCount is PlayCount - 1,
-    game(NewBoard, Player1-Type1, Player2-Type2, NextPlayCount).
-
-%%%%%%%%%%% READ MOVE %%%%%%%%%%%%%%%%
-
-read_move(X, Y):-
-    write('Insert the next play coordinates <A-K><0-10>. :'),
-    get_code(X1),
-    read(Y),
-    get_code(_),
-    integer(Y),
-    X is X1 - "A".
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-human(0).
-random_ai(1).
-beginner_ai(2).
-
-%%%%%%%%%%% GET NEXT MOVE %%%%%%%%%%%%%%%%%
-
-next_move(Player, Type, Board, NewBoard):-
-
-    human(Type), !,
-    read_move(X, Y),
-    move(Player-X-Y, Board, NewBoard).
-
-next_move(Player, Type, Board, NewBoard):-
-    random_ai(Type), !,
-    random_move(Board, Player, X, Y),
-    play(Board, Player-X-Y, NewBoard).
-
-next_move(Player, Type, Board, NewBoard):-
-    beginner_ai(Type),
-    ai_move(Board, Player, X, Y),
-    play(Board, Player-X-Y, NewBoard).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % %%%%%%%%%%% CHECK AGAINST ADJACENT ELEMENTS %%%%%%%%%%%% %

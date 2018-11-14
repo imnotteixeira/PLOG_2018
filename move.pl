@@ -45,16 +45,8 @@ ai_move(Board, Player, X, Y):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 simulate_move(Board, Player, X-Y, Value):-
-    write('Simulating | '),
-    write(X),
-    write(', '),
-    write(Y),
-    write(' |'), nl,
     play(Board, Player-X-Y, NewBoard),
-    value(NewBoard, Player, Value),
-    write('Simulated Value: '),
-    write(Value), nl.
-
+    value(NewBoard, Player, Value).
 
 valued_valid_move(Board, Player, X-Y, Value):-
     valid_move(Board, Player, X-Y), !,
