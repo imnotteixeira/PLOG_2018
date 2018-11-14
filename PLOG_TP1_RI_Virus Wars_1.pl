@@ -49,6 +49,16 @@ display_final_game:-
     final_gameplay(Board),
     display_game(Board, 0).
     
+%generates test board
+test_gameplay(L):-
+    L = [
+        [1,0,0,0,0,0],
+        [1,1,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,0,0],
+        [0,0,0,0,2,0],
+        [0,0,0,0,0,2]
+    ].
 %generates start board
 start_gameplay(L):-
     L = [
@@ -64,6 +74,7 @@ start_gameplay(L):-
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,2]
     ].
+
 %generates mid-game board
 mid_gameplay(L):-
     L = [
