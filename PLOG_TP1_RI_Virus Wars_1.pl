@@ -70,6 +70,7 @@ main:-
     write('1 - Human vs Computer (Lv.1)'),nl,
     write('2 - Human vs Computer (Lv.2)'),nl,
     write('3 - Computer vs Computer'),nl,
+    write('4 - Computer vs Computer - RANDOM'),nl,
     write('0 - Quit'),nl,
     read(Selection),
     parse_game_mode(Selection).
@@ -84,8 +85,11 @@ parse_game_mode(2):-
 parse_game_mode(3):-
     start_gameplay(Board),
     game(Board, 0-2, 1-2, 5).
+parse_game_mode(4):-
+    start_gameplay(Board),
+    game(Board, 0-1, 1-1, 5).
 parse_game_mode(_):-
-    write('Invalid Choice. Choose between <0-3>.'), nl,
+    write('Invalid Choice. Choose between <0-4>.'), nl,
     read(Selection),
     parse_game_mode(Selection), !.
 
