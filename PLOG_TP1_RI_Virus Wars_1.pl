@@ -65,6 +65,8 @@ final_gameplay(L):-
     ].
 
 main:-
+    now(T),
+    setrand(T),
     write(' -+*+- VIRUS WARS -+*+- '), nl, nl,
     write('Select Game Mode <0-3>:'), nl,
     write('1 - Human vs Computer (Lv.1)'),nl,

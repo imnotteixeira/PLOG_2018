@@ -5,8 +5,6 @@ value(Board, Player, Value):-
     proximity_value(Board, Player, ProximityVal, 0, 0, Board),
     Value is (ZVal ** 2) + ProximityVal.
 
-
-
 zombie_value([], _Player, Value, Value).
 
 zombie_value([Row | Tail], Player, Value, Counter):-

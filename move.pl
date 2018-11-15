@@ -1,5 +1,6 @@
 :- use_module(library(random)).
 :- use_module(library(system)).
+:- use_module(library(between)).
 
 move(Player-X-Y, Board, NewBoard):-
     valid_move(Board, Player, X-Y), !,
@@ -18,11 +19,6 @@ play(Board, Player-X-Y, NewBoard):-
 %%%%%%%%% RANDOM AI %%%%%%%%%%%%%%%%%
 
 random_move(Board, Player, X, Y):-
-    %%%%%% TODO PUT THIS IN MAIN %%%%
-    now(T),
-    setrand(T),
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
     valid_moves(Board, Player, ValidMoves), !,
     length(ValidMoves, NMoves),
     random(0, NMoves, Move),
@@ -36,9 +32,8 @@ random_move(Board, Player, X, Y):-
 %%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%
 
 ai_move(Board, Player, X, Y):-
-    % get_best_move(Board, Player, X, Y).
-    valid_moves_ordered_by_value(Board, Player, ValidMoves), !, 
-    nth0(0, ValidMoves, Value-X-Y).
+    valid_moves_ordered_by_value(Board, Player, ValidMoves), !,
+    select_best_move(ValidMoves, X, Y, []).
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,3 +49,22 @@ valued_valid_move(Board, Player, X-Y, Value):-
 
 valid_moves_ordered_by_value(Board, Player, ListOfMoves):-
     setof(Value-X-Y, valued_valid_move(Board, Player, X-Y, Value), ListOfMoves).
+
+
+select_best_move([], X, Y, BestMoves):-
+    length(BestMoves, NMoves),
+    UpperLimit is NMoves -1,
+    between(0, UpperLimit, Value),
+    nth0(Value, BestMoves, X-Y).    
+
+select_best_move([CurrVal-CurrX-CurrY | [ NextVal-NextX-NextY | Tail] ], X, Y, BestMoves):-
+    CurrVal > NextVal, !,
+    select_best_move([], X, Y, [ X-Y | BestMoves]).
+
+select_best_move([CurrVal-CurrX-CurrY | [ NextVal-NextX-NextY | Tail] ], X, Y, BestMoves):-
+    X is CurrX, 
+    Y is CurrY,
+    select_best_move([ NextVal-NextX-NextY | Tail], X, Y, [ X-Y | BestMoves]).
+
+
+

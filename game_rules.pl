@@ -11,14 +11,11 @@ non_zombie(1, 2).
 enemy_zombie(0, 4).
 enemy_zombie(1, 3).
 
-% verifiedCell(_,_):- fail.
-
 game_over(Board, 0) :-
     \+ valid_moves(Board, 1, _), !.
 
 game_over(Board, 1) :-
     \+ valid_moves(Board, 0, _), !.
-
 
 valid_moves(Board, Player, ListOfMoves):-
     setof(X-Y, valid_move(Board, Player, X-Y), ListOfMoves).
