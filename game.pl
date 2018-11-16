@@ -26,6 +26,10 @@ read_move(X, Y):-
     integer(Y),
     X is X1 - "A".
 
+read_move(X,Y):-
+    write('That is not a valid move!'), nl,
+    read_move(X,Y).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 human(0).
@@ -35,7 +39,6 @@ beginner_ai(2).
 %%%%%%%%%%% GET NEXT MOVE %%%%%%%%%%%%%%%%%
 
 next_move(Player, Type, Board, NewBoard):-
-
     human(Type), !,
     read_move(X, Y),
     move(Player-X-Y, Board, NewBoard).
