@@ -2,7 +2,6 @@ game(NewBoard, Player1-Type1, Player2-Type2, 0):-
     game(NewBoard, Player2-Type2, Player1-Type1, 5).
 
 game(Board, Player1-Type1, Player2-Type2, PlayCount):-
-    
     game_over(Board, Winner), !,
     display_game(Board, Player1),
     write('Game Over! Winner is Player '),
@@ -33,8 +32,9 @@ read_move(X,Y):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 human(0).
-random_ai(1).
-beginner_ai(2).
+beginner_ai(1).
+intermediate_ai(2).
+hard_ai(3).
 
 %%%%%%%%%%% GET NEXT MOVE %%%%%%%%%%%%%%%%%
 
@@ -49,11 +49,15 @@ next_move(Player, Type, Board, NewBoard):-
 
 
 choose_move(Board, Player-Type, X-Y):-
-    random_ai(Type), !,
+    beginner_ai(Type), !,
     random_move(Board, Player, X, Y).
 
 choose_move(Board, Player-Type, X-Y):-
-    beginner_ai(Type), !,
+    intermediate_ai(Type), !,
     ai_move(Board, Player, X, Y).
+
+choose_move(Board, Player-Type, X-Y):-
+    hard_ai(Type), !, 
+    hard_ai_move(Board, Player, X, Y).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

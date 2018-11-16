@@ -1,9 +1,31 @@
 % 1º zombie streaks
 % 2º proximidade a enemies (possibilidade de obter zombies)
 value(Board, Player, Value):-
+    win_condition(Board, Player, WinVal, 0),
     zombie_value(Board, Player, ZVal, 0),
     proximity_value(Board, Player, ProximityVal, 0, 0, Board),
-    Value is (ZVal ** 2) + ProximityVal.
+    Value is (WinVal ** 3) + (ZVal ** 2) + ProximityVal.
+
+win_condition([], _Player, 1000, 1).
+win_condition([], _Player, 1000, _).
+win_condition([Row | Tail], Player, WinVal, ActiveEnemyCount):-
+    row_win_condition(Row, Player, RowActiveEnemyCount, 0), !,
+    NextCount is ActiveEnemyCount + RowActiveEnemyCount,
+    win_condition(Tail, Player, WinVal, NextCount).
+
+row_win_condition([], _Player, Counter, Counter).
+row_win_condition([Cell | Tail], Player, Val, Counter):-
+    enemy(Player, Enemy),
+    non_zombie(Enemy, Cell), !, 
+    NextCounter = Counter + 1,
+    row_win_condition(Tail, Player, Val, NextCounter).
+
+row_win_condition([Cell | Tail], Player, Val, Counter):-
+    row_win_condition(Tail, Player, Val, Counter).
+
+
+
+
 
 zombie_value([], _Player, Value, Value).
 
