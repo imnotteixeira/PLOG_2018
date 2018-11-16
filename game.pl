@@ -1,3 +1,4 @@
+%main game loop
 game(NewBoard, Player1-Type1, Player2-Type2, 0):-
     game(NewBoard, Player2-Type2, Player1-Type1, 5).
 
@@ -31,6 +32,8 @@ read_move(X,Y):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%% Player Types %%%%%%%%%%%%%%%%%
 human(0).
 beginner_ai(1).
 intermediate_ai(2).
@@ -38,6 +41,7 @@ hard_ai(3).
 
 %%%%%%%%%%% GET NEXT MOVE %%%%%%%%%%%%%%%%%
 
+% return a new board with the player move
 next_move(Player, Type, Board, NewBoard):-
     human(Type), !,
     read_move(X, Y),
@@ -47,7 +51,7 @@ next_move(Player, Type, Board, NewBoard):-
     choose_move(Board, Player-Type, X-Y),
     play(Board, Player-X-Y, NewBoard).
 
-
+% get a move based on AI level
 choose_move(Board, Player-Type, X-Y):-
     beginner_ai(Type), !,
     random_move(Board, Player, X, Y).

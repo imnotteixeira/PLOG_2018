@@ -1,18 +1,21 @@
-% 1º zombie streaks
-% 2º proximidade a enemies (possibilidade de obter zombies)
+% 1º winning play
+% 2º zombie streaks
+% 3º proximidade a enemies (possibilidade de obter zombies)
 value(Board, Player, Value):-
     win_condition(Board, Player, WinVal, 0),
     zombie_value(Board, Player, ZVal, 0),
     proximity_value(Board, Player, ProximityVal, 0, 0, Board),
     Value is (WinVal ** 3) + (ZVal ** 2) + ProximityVal.
 
-win_condition([], _Player, 1000, 1).
-win_condition([], _Player, 1000, _).
+% return a high value (1000) if there's no active enemy (winning condition)
+win_condition([], _Player, 1000, 0).
+win_condition([], _Player, 0, _).
 win_condition([Row | Tail], Player, WinVal, ActiveEnemyCount):-
     row_win_condition(Row, Player, RowActiveEnemyCount, 0), !,
     NextCount is ActiveEnemyCount + RowActiveEnemyCount,
     win_condition(Tail, Player, WinVal, NextCount).
 
+% count active enemies in a row and return the count in Val
 row_win_condition([], _Player, Counter, Counter).
 row_win_condition([Cell | Tail], Player, Val, Counter):-
     enemy(Player, Enemy),
@@ -26,7 +29,7 @@ row_win_condition([Cell | Tail], Player, Val, Counter):-
 
 
 
-
+%get zombie streak value (more value for zombie streaks, some for single zombies)
 zombie_value([], _Player, Value, Value).
 
 zombie_value([Row | Tail], Player, Value, Counter):-
@@ -53,6 +56,7 @@ zombie_row_value([_ | Tail], Player, RowVal, Max_Seq, _Curr_Seq):-
     zombie_row_value(Tail, Player, RowVal, Max_Seq, 0).
 
 
+%get adjacency value -> check if the move puts the player next to an enemy to create a zombie in the next play
 proximity_value([], _Player, Value, Value, _Y, _Board).
 
 proximity_value([Row | Tail], Player, Value, Counter, Y, Board):-
@@ -74,7 +78,7 @@ proximity_row_value([_ | Tail], Player, RowVal, CurrVal, CurrX, CurrY, Board):-
     NewX is CurrX + 1,
     proximity_row_value(Tail, Player, RowVal, CurrVal, NewX, CurrY, Board).
 
-
+%checks if there's an active enemy (non-zombie) adjacent to (X,Y) cell
 has_enemy_adjacent(Player, X, Y, Matrix):-
     RightX is X + 1,
     getElementInCoords(Matrix, RightX, Y, Elem),

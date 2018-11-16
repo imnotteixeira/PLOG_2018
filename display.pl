@@ -1,3 +1,4 @@
+% displays the game's state (Board + Player Turn)
 display_game(Board, Player):-
     nl,
     length(Board, Length),

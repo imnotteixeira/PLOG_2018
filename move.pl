@@ -27,6 +27,19 @@ random_move(Board, Player, X, Y):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+simulate_move(Board, Player, X-Y, Value):-
+    play(Board, Player-X-Y, NewBoard),
+    value(NewBoard, Player, Value), !.
+
+valued_valid_move(Board, Player, X-Y, Value):-
+    valid_move(Board, Player, X-Y),
+    simulate_move(Board, Player, X-Y, Value).
+
+valid_moves_valued(Board, Player, ListOfMoves):-
+    findall(Value-X-Y, valued_valid_move(Board, Player, X-Y, Value), ListOfMoves).
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%%
 
@@ -36,11 +49,6 @@ ai_move(Board, Player, X, Y):-
     length(BestMoves, NMoves),
     random(0, NMoves, MoveIndex),
     nth0(MoveIndex, BestMoves, X-Y).
-
-
-
-
-
 
 get_best_moves(Moves, BestMoves):-
     nth0(0, Moves, Val-X-Y),
@@ -70,7 +78,7 @@ find_moves_by_value([Val-X-Y | Tail], TargetVal, Moves):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%%
+%%%%%%%%% SMARTER AI %%%%%%%%%%%%%%%%
 
 hard_ai_move(Board, Player, X, Y):-
     valid_moves(Board, Player, FirstLevelValidMoves), !,
@@ -80,29 +88,10 @@ hard_ai_move(Board, Player, X, Y):-
     length(WorstMoves, NMoves),
     random(0, NMoves, MoveIndex),
 
-    write('UpperLimit: '), 
-    write(UpperLimit), nl,
-    write('MoveIndex: '), 
-    write(MoveIndex), nl,
     nth0(MoveIndex, WorstMoves, X-Y).    
     
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-simulate_move(Board, Player, X-Y, Value):-
-    play(Board, Player-X-Y, NewBoard),
-    value(NewBoard, Player, Value), !.
-
-valued_valid_move(Board, Player, X-Y, Value):-
-    valid_move(Board, Player, X-Y),
-    simulate_move(Board, Player, X-Y, Value).
-
-valid_moves_valued(Board, Player, ListOfMoves):-
-    findall(Value-X-Y, valued_valid_move(Board, Player, X-Y, Value), ListOfMoves).
-
-valid_moves_ordered_by_value(Board, Player, ListOfMoves):-
-    setof(Value-X-Y, valued_valid_move(Board, Player, X-Y, Value), ListOfMoves).
 
 get_valid_oponent_moves(_, _, [], []).
  
@@ -126,6 +115,15 @@ attach_src_move_to_counter_moves(SrcX, SrcY, [Val-X-Y | Tail], [SrcX-SrcY-Val-X-
     attach_src_move_to_counter_moves(SrcX, SrcY, Tail, EnemyMovesWithSource).
 
 
+
+% Get the best moves (The ones that lead to the worst enemy counter-moves)
+get_best_source_moves(Moves, BestMoves):-
+    nth0(0, Moves, SrcX-SrcY-Val-X-Y), % Get the value of the first move to test
+    get_min_counter_move_value(Moves, MinVal, Val), % find the minimum value
+    find_source_moves_by_counter_value(Moves, MinVal, BestMoves). % BestMoves <- Worst Moves by the enemy
+
+
+% Get minimum value of the provided counter moves
 get_min_counter_move_value([], CurrMin, CurrMin).
 
 get_min_counter_move_value([SrcX-SrcY-Val-X-Y | Tail], Max, CurrMin):-
@@ -135,14 +133,7 @@ get_min_counter_move_value([SrcX-SrcY-Val-X-Y | Tail], Max, CurrMin):-
 get_min_counter_move_value([SrcX-SrcY-Val-X-Y | Tail], Max, CurrMin):-
     get_min_counter_move_value(Tail, Max, CurrMin).
 
-
-
-
-get_best_source_moves(Moves, BestMoves):-
-    nth0(0, Moves, SrcX-SrcY-Val-X-Y),
-    get_min_counter_move_value(Moves, MinVal, Val),
-    find_source_moves_by_counter_value(Moves, MinVal, BestMoves).
-
+% Get all source moves with the provided counter-move value
 find_source_moves_by_counter_value([], _Val, []).
 
 find_source_moves_by_counter_value([SrcX-SrcY-Val-X-Y | Tail], TargetVal, [ SrcX-SrcY | Moves]):-
