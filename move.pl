@@ -31,8 +31,39 @@ random_move(Board, Player, X, Y):-
 %%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%%
 
 ai_move(Board, Player, X, Y):-
-    valid_moves_ordered_by_value(Board, Player, ValidMoves), !,
-    select_best_move(ValidMoves, X, Y, []).
+    valid_moves_valued(Board, Player, ValidMoves), !,
+    get_best_moves(ValidMoves, BestMoves),
+    length(BestMoves, NMoves),
+    random(0, NMoves, MoveIndex),
+    nth0(MoveIndex, BestMoves, X-Y).
+
+
+
+
+
+
+get_best_moves(Moves, BestMoves):-
+    nth0(0, Moves, Val-X-Y),
+    get_max_move_value(Moves, MaxVal, Val),
+    find_moves_by_value(Moves, MaxVal, BestMoves).
+
+get_max_move_value([], CurrMax, CurrMax).
+
+get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
+    Val > CurrMax, !,
+    get_max_move_value(Tail, Max, Val).
+
+get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
+    get_max_move_value(Tail, Max, CurrMax).
+
+find_moves_by_value([], _Val, []).
+
+find_moves_by_value([Val-X-Y | Tail], TargetVal, [ X-Y | Moves]):-
+    Val =:= TargetVal, !,
+    find_moves_by_value(Tail, TargetVal, Moves).
+
+find_moves_by_value([Val-X-Y | Tail], TargetVal, Moves):-
+    find_moves_by_value(Tail, TargetVal, Moves).
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,23 +103,6 @@ valid_moves_valued(Board, Player, ListOfMoves):-
 
 valid_moves_ordered_by_value(Board, Player, ListOfMoves):-
     setof(Value-X-Y, valued_valid_move(Board, Player, X-Y, Value), ListOfMoves).
-
-select_best_move([], X, Y, BestMoves):-
-    length(BestMoves, NMoves),
-    UpperLimit is NMoves -1,
-    between(0, UpperLimit, Value),
-    nth0(Value, BestMoves, X-Y).    
-
-select_best_move([ CurrVal-CurrX-CurrY | [ NextVal-NextX-NextY | Tail] ], X, Y, BestMoves):-
-    CurrVal > NextVal, !,
-    select_best_move([], X, Y, [ X-Y | BestMoves]).
-
-select_best_move([CurrVal-CurrX-CurrY | [ NextVal-NextX-NextY | Tail] ], X, Y, BestMoves):-
-    X is CurrX, 
-    Y is CurrY,
-    select_best_move([ NextVal-NextX-NextY | Tail], X, Y, [ X-Y | BestMoves]).
-
-
 
 get_valid_oponent_moves(_, _, [], []).
  
