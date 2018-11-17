@@ -19,10 +19,10 @@ enemy_zombie(1, 3).
 
 % Check if game is over and unify the winner variable
 game_over(Board, 0) :-
-    \+ valid_moves(Board, 1, _), !.
+    \+ valid_move(Board, 1, _), !.
 
 game_over(Board, 1) :-
-    \+ valid_moves(Board, 0, _), !.
+    \+ valid_move(Board, 0, _), !.
 
 %Get all valid moves for a given game state and player
 valid_moves(Board, Player, ListOfMoves):-
