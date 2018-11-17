@@ -22,6 +22,7 @@ read_move(X, Y):-
     write('Insert the next play coordinates (Example: A10.) : '),
     get_code(X1),
     catch(read(Y),_,fail),
+    get_char(_),
     integer(Y),
     X is X1 - "A".
 
