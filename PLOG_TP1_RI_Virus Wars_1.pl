@@ -70,44 +70,19 @@ main:-
     now(T),
     setrand(T),
     write(' -+*+- VIRUS WARS -+*+- '), nl, nl,
-    write('Select Game Mode <0-3>:'), nl,
-    write('1 - Human vs Human'),nl,
-    write('2 - Human vs Computer (Lv.1)'),nl,
-    write('3 - Human vs Computer (Lv.2)'),nl,
-    write('4 - Human vs Computer (Lv.3)'),nl,
-    write('5 - Computer vs Computer (Lv. 1)'),nl,
-    write('6 - Computer vs Computer (Lv. 2)'),nl,
-    write('7 - Computer vs Computer (Lv. 3)'),nl,
-    write('0 - Quit'),nl,
-    read(Selection),
-    parse_game_mode(Selection).
+    display_player_options,
+    catch(read(Player0Type),_,fail),
+    display_player_options,
+    catch(read(Player1Type),_,fail),
+    start_gameplay(Board),
+    game(Board, 0-Player0Type, 1-Player1Type, 5).
 
-% Game menu options selectors
-parse_game_mode(0).
-parse_game_mode(1):-
-    start_gameplay(Board),
-    game(Board, 0-0, 1-0, 5).
-parse_game_mode(2):-
-    start_gameplay(Board),
-    game(Board, 0-0, 1-1, 5).
-parse_game_mode(3):-
-    start_gameplay(Board),
-    game(Board, 0-0, 1-2, 5).
-parse_game_mode(4):-
-    start_gameplay(Board),
-    game(Board, 0-0, 1-3, 5).
-parse_game_mode(5):-
-    start_gameplay(Board),
-    game(Board, 0-1, 1-1, 5).
-parse_game_mode(6):-
-    start_gameplay(Board),
-    game(Board, 0-2, 1-2, 5).
-parse_game_mode(7):-
-    start_gameplay(Board),
-    game(Board, 0-3, 1-3, 5).
+main:-
+    write('Invalid Choice. Try again.'), nl.
 
-parse_game_mode(_):-
-    write('Invalid Choice. Choose between <0-4>.'), nl,
-    read(Selection),
-    parse_game_mode(Selection), !.
-
+display_player_options:-
+    write('Select Player Mode <0-3>:'), nl,
+    write('0 - Human'),nl,
+    write('1 - Computer (Lv.1)'),nl,
+    write('2 - Computer (Lv.2)'),nl,
+    write('3 - Computer (Lv.3)'),nl.
