@@ -90,6 +90,7 @@ main:-
     display_player_options,
     catch(read(Player1Type),_,fail),
     start_gameplay(Board),
+    get_char(_),
     game(Board, 0-Player0Type, 1-Player1Type, 5).
 
 main:-
