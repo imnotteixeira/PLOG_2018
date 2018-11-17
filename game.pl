@@ -19,10 +19,9 @@ game(Board, Player1-Type1, Player2-Type2, PlayCount):-
 %%%%%%%%%%% READ MOVE %%%%%%%%%%%%%%%%
 
 read_move(X, Y):-
-    write('Insert the next play coordinates <A-K><0-10>. :'),
+    write('Insert the next play coordinates (Example: A10.) : '),
     get_code(X1),
-    read(Y),
-    get_code(_),
+    catch(read(Y),_,fail),
     integer(Y),
     X is X1 - "A".
 
