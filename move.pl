@@ -55,6 +55,7 @@ get_best_moves(Moves, BestMoves):-
     get_max_move_value(Moves, MaxVal, Val),
     find_moves_by_value(Moves, MaxVal, BestMoves).
 
+
 get_max_move_value([], CurrMax, CurrMax).
 
 get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
@@ -63,6 +64,17 @@ get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
 
 get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
     get_max_move_value(Tail, Max, CurrMax).
+
+
+get_min_move_value([], CurrMin, CurrMin).
+
+get_min_move_value([Val-X-Y | Tail], Min, CurrMin):-
+    Val < CurrMin, !,
+    get_min_move_value(Tail, Min, Val).
+
+get_min_move_value([Val-X-Y | Tail], Min, CurrMin):-
+    get_min_move_value(Tail, Min, CurrMin).
+
 
 find_moves_by_value([], _Val, []).
 
@@ -82,64 +94,28 @@ find_moves_by_value([Val-X-Y | Tail], TargetVal, Moves):-
 
 hard_ai_move(Board, Player, X, Y):-
     valid_moves(Board, Player, FirstLevelValidMoves), !,
-    get_valid_oponent_moves(Board, Player, FirstLevelValidMoves, SecondLevelValidMoves), !,
-    
-    get_best_source_moves(SecondLevelValidMoves, WorstMoves),
-    length(WorstMoves, NMoves),
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelValidMoves, SecondLevelValidMoves), !,
+    nth0(0, SecondLevelValidMoves, Val-_-_),
+    get_min_move_value(SecondLevelValidMoves, MinVal, Val),
+    find_moves_by_value(SecondLevelValidMoves, MinVal, SelectedMoves),
+    length(SelectedMoves, NMoves),
     random(0, NMoves, MoveIndex),
-
-    nth0(MoveIndex, WorstMoves, X-Y).    
+    nth0(MoveIndex, SelectedMoves, X-Y).    
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-get_valid_oponent_moves(_, _, [], []).
+get_oponent_max_values_for_valid_moves(_, _, [], []).
  
-get_valid_oponent_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], SecondLevelValidMoves):-
+get_oponent_max_values_for_valid_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], [MaxVal-SrcX-SrcY | NewSecondLevelMoves]):-
     enemy(Player, Enemy), % get enemy player
     play(Board, Player-SrcX-SrcY, CurrPlayBoard), % simulate a move
     valid_moves_valued(CurrPlayBoard, Enemy, EnemyMoves), % get valid oponent moves for the above simulated move
-    length(EnemyMoves, 0), !, 
-    SecondLevelValidMoves = [SrcX-SrcY-1000-99-99].% populate the result.
-
-get_valid_oponent_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], SecondLevelValidMoves):-
-    enemy(Player, Enemy), % get enemy player
-    play(Board, Player-SrcX-SrcY, CurrPlayBoard), % simulate a move
-    valid_moves_valued(CurrPlayBoard, Enemy, EnemyMoves), % get valid oponent moves for the above simulated move
-    attach_src_move_to_counter_moves(SrcX, SrcY, EnemyMoves, EnemyMovesWithSource),
-    get_valid_oponent_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves), % get remaining oponent moves (recusrsion)
-    append(EnemyMovesWithSource, NewSecondLevelMoves, SecondLevelValidMoves).% populate the result
-
-attach_src_move_to_counter_moves(_SrcX, _SrcY, [], []).
-attach_src_move_to_counter_moves(SrcX, SrcY, [Val-X-Y | Tail], [SrcX-SrcY-Val-X-Y | EnemyMovesWithSource ]):-
-    attach_src_move_to_counter_moves(SrcX, SrcY, Tail, EnemyMovesWithSource).
-
-
-
-% Get the best moves (The ones that lead to the worst enemy counter-moves)
-get_best_source_moves(Moves, BestMoves):-
-    nth0(0, Moves, SrcX-SrcY-Val-X-Y), % Get the value of the first move to test
-    get_min_counter_move_value(Moves, MinVal, Val), % find the minimum value
-    find_source_moves_by_counter_value(Moves, MinVal, BestMoves). % BestMoves <- Worst Moves by the enemy
-
-
-% Get minimum value of the provided counter moves
-get_min_counter_move_value([], CurrMin, CurrMin).
-
-get_min_counter_move_value([SrcX-SrcY-Val-X-Y | Tail], Max, CurrMin):-
-    Val < CurrMin, !,
-    get_min_counter_move_value(Tail, Max, Val).
-
-get_min_counter_move_value([SrcX-SrcY-Val-X-Y | Tail], Max, CurrMin):-
-    get_min_counter_move_value(Tail, Max, CurrMin).
-
-% Get all source moves with the provided counter-move value
-find_source_moves_by_counter_value([], _Val, []).
-
-find_source_moves_by_counter_value([SrcX-SrcY-Val-X-Y | Tail], TargetVal, [ SrcX-SrcY | Moves]):-
-    Val =:= TargetVal, !,
-    find_source_moves_by_counter_value(Tail, TargetVal, Moves).
-
-find_source_moves_by_counter_value([SrcX-SrcY-Val-X-Y | Tail], TargetVal, Moves):-
-    find_source_moves_by_counter_value(Tail, TargetVal, Moves).
+    \+ length(EnemyMoves, 0), !,
+    nth0(0, EnemyMoves, Val-X-Y),
+    get_max_move_value(EnemyMoves, MaxVal, Val),
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves).
+   
+get_oponent_max_values_for_valid_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], [1000-SrcX-SrcY | NewSecondLevelMoves]):-
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves).
 
