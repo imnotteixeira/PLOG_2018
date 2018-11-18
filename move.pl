@@ -18,10 +18,10 @@ play(Board, Player-X-Y, NewBoard):-
 %%%%%%%%% RANDOM AI %%%%%%%%%%%%%%%%%
 
 random_move(Board, Player, X, Y):-
-    valid_moves(Board, Player, ValidMoves), !,
-    length(ValidMoves, NMoves),
-    random(0, NMoves, Move),
-    nth0(Move, ValidMoves, X-Y).
+    valid_moves(Board, Player, ValidMoves), !, % get possible moves for player
+    length(ValidMoves, NMoves), % get number of possible moves to generate a random one
+    random(0, NMoves, Move), % generate a random index for choosing the selected move
+    nth0(Move, ValidMoves, X-Y). % get the chosen move from the random index
     
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -44,16 +44,16 @@ valid_moves_valued(Board, Player, ListOfMoves):-
 %%%%%%%%% SMART AI %%%%%%%%%%%%%%%%%%
 
 ai_move(Board, Player, X, Y):-
-    valid_moves_valued(Board, Player, ValidMoves), !,
-    get_best_moves(ValidMoves, BestMoves),
-    length(BestMoves, NMoves),
-    random(0, NMoves, MoveIndex),
-    nth0(MoveIndex, BestMoves, X-Y).
+    valid_moves_valued(Board, Player, ValidMoves), !, % get possible moves for player
+    get_best_moves(ValidMoves, BestMoves), % get the moves that generate a move favorable board
+    length(BestMoves, NMoves), % get number of selected moves to generate a random one
+    random(0, NMoves, MoveIndex), % generate a random index for choosing the selected move
+    nth0(MoveIndex, BestMoves, X-Y). % get the chosen move from the random index
 
 get_best_moves(Moves, BestMoves):-
-    nth0(0, Moves, Val-X-Y),
-    get_max_move_value(Moves, MaxVal, Val),
-    find_moves_by_value(Moves, MaxVal, BestMoves).
+    nth0(0, Moves, Val-X-Y), % get the first value for max (next line)
+    get_max_move_value(Moves, MaxVal, Val), % get best value of board from possible moves
+    find_moves_by_value(Moves, MaxVal, BestMoves). % get all moves that result in the previously calculated best value
 
 
 get_max_move_value([], CurrMax, CurrMax).
@@ -93,14 +93,14 @@ find_moves_by_value([Val-X-Y | Tail], TargetVal, Moves):-
 %%%%%%%%% SMARTER AI %%%%%%%%%%%%%%%%
 
 hard_ai_move(Board, Player, X, Y):-
-    valid_moves(Board, Player, FirstLevelValidMoves), !,
-    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelValidMoves, SecondLevelValidMoves), !,
-    nth0(0, SecondLevelValidMoves, Val-_-_),
-    get_min_move_value(SecondLevelValidMoves, MinVal, Val),
-    find_moves_by_value(SecondLevelValidMoves, MinVal, SelectedMoves),
-    length(SelectedMoves, NMoves),
-    random(0, NMoves, MoveIndex),
-    nth0(MoveIndex, SelectedMoves, X-Y).    
+    valid_moves(Board, Player, FirstLevelValidMoves), !, % get possible moves for player
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelValidMoves, SecondLevelValidMoves), !, % get max enemy counter-move values for each possible player move
+    nth0(0, SecondLevelValidMoves, Val-_-_), % get the first value for min (next line)
+    get_min_move_value(SecondLevelValidMoves, MinVal, Val), % get min value of the max values of counter-moves
+    find_moves_by_value(SecondLevelValidMoves, MinVal, SelectedMoves), % get all moves that generate counter-moves whose max is equal to the min calculated in last line 
+    length(SelectedMoves, NMoves), % get number of selected moves to generate a random one
+    random(0, NMoves, MoveIndex), % generate a random index for choosing the selected move
+    nth0(MoveIndex, SelectedMoves, X-Y). % get the chosen move from the random index
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,11 +111,11 @@ get_oponent_max_values_for_valid_moves(Board, Player, [SrcX-SrcY | FirstLevelTai
     enemy(Player, Enemy), % get enemy player
     play(Board, Player-SrcX-SrcY, CurrPlayBoard), % simulate a move
     valid_moves_valued(CurrPlayBoard, Enemy, EnemyMoves), % get valid oponent moves for the above simulated move
-    \+ length(EnemyMoves, 0), !,
-    nth0(0, EnemyMoves, Val-X-Y),
-    get_max_move_value(EnemyMoves, MaxVal, Val),
-    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves).
+    \+ length(EnemyMoves, 0), !, % check if oponent has any moves
+    nth0(0, EnemyMoves, Val-_-_), % get the first value for max (next line)
+    get_max_move_value(EnemyMoves, MaxVal, Val), % get the max value of a possible enemy move after the simulated move
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves). % recursive call to populate list
    
-get_oponent_max_values_for_valid_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], [1000-SrcX-SrcY | NewSecondLevelMoves]):-
-    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves).
+get_oponent_max_values_for_valid_moves(Board, Player, [SrcX-SrcY | FirstLevelTail], [1000-SrcX-SrcY | NewSecondLevelMoves]):- % make sure oponent has a high value if it has no moves
+    get_oponent_max_values_for_valid_moves(Board, Player, FirstLevelTail, NewSecondLevelMoves). % recursive call to populate list
 
