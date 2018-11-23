@@ -51,28 +51,28 @@ ai_move(Board, Player, X, Y):-
     nth0(MoveIndex, BestMoves, X-Y). % get the chosen move from the random index
 
 get_best_moves(Moves, BestMoves):-
-    nth0(0, Moves, Val-X-Y), % get the first value for max (next line)
+    nth0(0, Moves, Val-_X-_Y), % get the first value for max (next line)
     get_max_move_value(Moves, MaxVal, Val), % get best value of board from possible moves
     find_moves_by_value(Moves, MaxVal, BestMoves). % get all moves that result in the previously calculated best value
 
 
 get_max_move_value([], CurrMax, CurrMax).
 
-get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
+get_max_move_value([Val-_X-_Y | Tail], Max, CurrMax):-
     Val > CurrMax, !,
     get_max_move_value(Tail, Max, Val).
 
-get_max_move_value([Val-X-Y | Tail], Max, CurrMax):-
+get_max_move_value([Val-_X-_Y | Tail], Max, CurrMax):-
     get_max_move_value(Tail, Max, CurrMax).
 
 
 get_min_move_value([], CurrMin, CurrMin).
 
-get_min_move_value([Val-X-Y | Tail], Min, CurrMin):-
+get_min_move_value([Val-_X-_Y | Tail], Min, CurrMin):-
     Val < CurrMin, !,
     get_min_move_value(Tail, Min, Val).
 
-get_min_move_value([Val-X-Y | Tail], Min, CurrMin):-
+get_min_move_value([Val-_X-_Y | Tail], Min, CurrMin):-
     get_min_move_value(Tail, Min, CurrMin).
 
 
@@ -82,7 +82,7 @@ find_moves_by_value([Val-X-Y | Tail], TargetVal, [ X-Y | Moves]):-
     Val =:= TargetVal, !,
     find_moves_by_value(Tail, TargetVal, Moves).
 
-find_moves_by_value([Val-X-Y | Tail], TargetVal, Moves):-
+find_moves_by_value([Val-_X-_Y | Tail], TargetVal, Moves):-
     find_moves_by_value(Tail, TargetVal, Moves).
     
 

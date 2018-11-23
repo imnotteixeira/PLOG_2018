@@ -19,11 +19,11 @@ replace_at(SourceList, DestList, N, NewVal):-
     !,
     replace_at_aux(SourceList, DestList, 0, N, NewVal).
 
-replace_at(SourceList, DestList, N, NewVal):-
+replace_at(_SourceList, _DestList, _N, _NewVal):-
     nl, write('Trying to replace an index out of bounds!'), nl, fail.
 
 
-replace_at_aux([H|T], LResult, C, C, NewVal):-
+replace_at_aux([_H|T], LResult, C, C, NewVal):-
     LResult = [NewVal | T].
 
 replace_at_aux([H|T], LResult, C, N, NewVal):-

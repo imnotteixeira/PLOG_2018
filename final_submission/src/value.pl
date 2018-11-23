@@ -23,7 +23,7 @@ row_win_condition([Cell | Tail], Player, Val, Counter):-
     NextCounter = Counter + 1,
     row_win_condition(Tail, Player, Val, NextCounter).
 
-row_win_condition([Cell | Tail], Player, Val, Counter):-
+row_win_condition([_Cell | Tail], Player, Val, Counter):-
     row_win_condition(Tail, Player, Val, Counter).
 
 

@@ -2,7 +2,7 @@
 game(NewBoard, Player1-Type1, Player2-Type2, 0):-
     game(NewBoard, Player2-Type2, Player1-Type1, 5).
 
-game(Board, Player1-Type1, Player2-Type2, PlayCount):-
+game(Board, Player1-_Type1, _Player2-_Type2, _PlayCount):-
     game_over(Board, Winner), !,
     display_game(Board, Player1),
     write('Game Over! Winner is Player '),
