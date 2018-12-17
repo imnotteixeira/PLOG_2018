@@ -39,7 +39,7 @@ getCoeffsAux(NbrOfDigits, [H | T], CurrCoef):-
 setRestrictions(FirstNumberList, AmountOfNumbers, Multiplier, NbrOfDigits, Coeffs):-
     length(NumberLists, AmountOfNumbers),
     generateNumbers(FirstNumberList, Multiplier, NbrOfDigits, Coeffs, NumberLists, 1),
-
+    write('.'),
     labeling([], NumberLists),
     write(NumberLists).
 
@@ -55,7 +55,7 @@ generateNumbers(LastNumberList, Multiplier, NbrOfDigits, Coeffs, NumberLists, Co
     scalar_product(Coeffs, LastNumberListDigitRemoved, #=, LastNumberDigitRemoved),
     element(1, NumberLists, FirstNumber),
     LastNum #\= FirstNumber,
-    (FirstNumber #= LastNumberDigitRemoved #\/ FirstNumber #= LastNum * Multiplier),
+    (FirstNumber #= LastNum * Multiplier #\/ (LastNum #>= 10 #/\ FirstNumber #= LastNumberDigitRemoved)),
 
     element(Counter, NumberLists, LastNum).
 
@@ -63,7 +63,7 @@ generateNumbers(PreviousNumberList, Multiplier, NbrOfDigits, Coeffs, NumberLists
     scalar_product(Coeffs, PreviousNumberList, #=, PrevNum),
     element(Counter, NumberLists, PrevNum),
     generateNumber(PreviousNumberList, Multiplier, NbrOfDigits, Coeffs, CurrentNumberList),
-    NextCounter #= Counter + 1,
+    NextCounter is Counter + 1,
     generateNumbers(CurrentNumberList, Multiplier, NbrOfDigits, Coeffs, NumberLists, NextCounter).
 
 generateNumber(PrevNumberList, Multiplier, NbrOfDigits, Coeffs, NextNumberList):-
@@ -71,7 +71,7 @@ generateNumber(PrevNumberList, Multiplier, NbrOfDigits, Coeffs, NextNumberList):
     generateRestrictedNumberRemoveDigit(PrevNumberList, NbrOfDigits, Coeffs, NextNumberDigitRemovedList),
     scalar_product(Coeffs, NextNumberDigitRemovedList, #=, NextNumberDigitRemoved),
     NextNumber #\= PrevNumber,
-    NextNumber #= NextNumberDigitRemoved #\/ NextNumber #= PrevNumber * Multiplier,
+    NextNumber #= PrevNumber * Multiplier #\/ (PrevNumber #>= 10 #/\ NextNumber #= NextNumberDigitRemoved),
     generateNumberListFromNumber(NextNumber, NbrOfDigits, Coeffs, NextNumberList).
     
 
@@ -89,21 +89,10 @@ restrictNumberListRemoveDigit(_, _, NextNumberList,1):-
 restrictNumberListRemoveDigit(PrevNumList, IndexToRemove, NextNumList, CurrIndex):-
     %In case CurrIndex > IndexToRemove
     PrevIndex #= CurrIndex -1,
-    CurrIndex #> IndexToRemove,
-    element(CurrIndex, PrevNumList, CurrValue),
+    (ComparedIndex #= CurrIndex #/\ CurrIndex #> IndexToRemove) #\/ (ComparedIndex #= PrevIndex #/\ CurrIndex #=< IndexToRemove),
+    element(ComparedIndex, PrevNumList, CurrValue),
     element(CurrIndex, NextNumList, CurrValue),
     restrictNumberListRemoveDigit(PrevNumList,IndexToRemove,NextNumList,PrevIndex).
-
-restrictNumberListRemoveDigit(PrevNumList, IndexToRemove, NextNumList, CurrIndex):-
-    %In case CurrIndex <= IndexToRemove
-    PrevIndex #= CurrIndex - 1,
-    CurrIndex #=< IndexToRemove,
-    element(PrevIndex, PrevNumList, CurrValue),
-    element(CurrIndex, NextNumList, CurrValue),
-    restrictNumberListRemoveDigit(PrevNumList,IndexToRemove,NextNumList,PrevIndex).
-
-    
-
 
 
 
