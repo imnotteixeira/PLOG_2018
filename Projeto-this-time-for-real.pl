@@ -1,12 +1,13 @@
 :-use_module(library(clpfd)).
 
-main(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
+main(FirstNumber, AmountOfNumbers, Multiplier, Vars):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
     length(ResultList, AmountOfNumbers),
     domain(ResultList, 1, Max),
     getDigitsInNumber(Max, NbrOfDigits, 0),
-    getCoeffs(NbrOfDigits, Coeffs, [], 1),
-    
+
+    CoeffsSize is NbrOfDigits + 1,
+    getCoeffs(CoeffsSize, Coeffs, [], 1),
     element(1, ResultList, FirstNumber),
     % trace,
     generateNumbers(ResultList, Multiplier, Coeffs, NbrOfDigits, 1, Powers, []),
@@ -22,10 +23,8 @@ getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
     getMaxNumber(NextNumber, NextAmount, Multiplier, Max).
 
 generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
-    write('-----Counter----'),
-    write(Counter), nl,
     length(List, Counter),
-    write('generateNumbers - base case'), nl,
+    % write('generateNumbers - base case'), nl,
     element(Counter, List, LastElement),
     element(1, List, FirstElement),
     generateRestrictedNumberRemoveDigit(LastElement, Coeffs, NbrOfDigits, LastElementWithRemovedDigit, GeneratedPowers),
@@ -34,7 +33,7 @@ generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTe
 
 generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
     element(Counter, List, CurrElement),
-    write('generateNumbers - normal'), nl,
+    % write('generateNumbers - normal'), nl,
     NextCounter is Counter + 1,
     element(NextCounter, List, NextElement),
     generateRestrictedNumberRemoveDigit(CurrElement, Coeffs, NbrOfDigits, CurrElementWithRemovedDigit, GeneratedPowers),
@@ -43,18 +42,12 @@ generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTe
     generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, NextCounter, Powers, NewPowers).
 
 generateRestrictedNumberRemoveDigit(Number, Coeffs, NbrOfDigits, NextNumber, PowersList):-
-    % Number #> NextNumber,
-    NextNumber #> 0,
     Iminus1 #= I - 1,
     element(I, Coeffs, PowerI),
     element(Iminus1, Coeffs, PowerIminus1),
-    write('uno'),nl,
     LeftSide #= Number // PowerI,
-    write('dos'),nl,
     RightSide #= Number mod PowerIminus1,
-    write('tres'),nl,
     NextNumber #= (LeftSide * PowerIminus1 + RightSide),
-    write('cuatro'),nl,
     PowersList = [PowerI, PowerIminus1].
 
 getDigitsInNumber(0, Nbr, Nbr).
