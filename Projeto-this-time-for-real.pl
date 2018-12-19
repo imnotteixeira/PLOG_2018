@@ -1,20 +1,30 @@
 :-use_module(library(clpfd)).
 
-main(FirstNumber, AmountOfNumbers, Multiplier, Vars):-
+wubalubadubdub(LOL):-
+    findall(RIP, main(41, 8, 7, RIP), LOL),
+    nl, write('Helllloo').
+
+main(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
     length(ResultList, AmountOfNumbers),
     domain(ResultList, 1, Max),
     getDigitsInNumber(Max, NbrOfDigits, 0),
 
     CoeffsSize is NbrOfDigits + 1,
-    getCoeffs(CoeffsSize, Coeffs, [], 1),
-    element(1, ResultList, FirstNumber),
-    % trace,
+    length(Coeffs, CoeffsSize),
+    element(1, Coeffs, 1),
+    generateCoeffs(Coeffs),
+
+    element(1, ResultList, FirstNumber),!,
     generateNumbers(ResultList, Multiplier, Coeffs, NbrOfDigits, 1, Powers, []),
     append(Powers, ResultList, Vars),
 
-    write('.'),
-    labeling([], Vars).
+    statistics(runtime, [Start, _]),
+    labeling([max_regret, bisect], Vars),
+    statistics(runtime, [End, _]),
+    Time is End - Start,
+    write('Time: '),
+    write(Time).
 
 getMaxNumber(Max,1,_,Max).
 getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
@@ -24,31 +34,29 @@ getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
 
 generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
     length(List, Counter),
-    % write('generateNumbers - base case'), nl,
     element(Counter, List, LastElement),
     element(1, List, FirstElement),
-    generateRestrictedNumberRemoveDigit(LastElement, Coeffs, NbrOfDigits, LastElementWithRemovedDigit, GeneratedPowers),
-    (FirstElement #= LastElement * Multiplier) #\/ (LastElement #>= 10 #/\ FirstElement #= LastElementWithRemovedDigit),
-    append(PowersTemp, GeneratedPowers, Powers).
+    generateRestrictedNumberRemoveDigit(LastElement, Coeffs, NbrOfDigits, LastElementWithRemovedDigit, GeneratedPower),
+    (FirstElement #= LastElement * Multiplier #/\ GeneratedPower #= 1) #\/ (LastElement #>= 10 #/\ FirstElement #= LastElementWithRemovedDigit),
+    append(PowersTemp, [GeneratedPower], Powers).
 
 generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
     element(Counter, List, CurrElement),
-    % write('generateNumbers - normal'), nl,
     NextCounter is Counter + 1,
     element(NextCounter, List, NextElement),
-    generateRestrictedNumberRemoveDigit(CurrElement, Coeffs, NbrOfDigits, CurrElementWithRemovedDigit, GeneratedPowers),
-    (NextElement #= CurrElement * Multiplier) #\/ (CurrElement #>= 10 #/\ NextElement #= CurrElementWithRemovedDigit),
-    append(PowersTemp, GeneratedPowers, NewPowers),
+    generateRestrictedNumberRemoveDigit(CurrElement, Coeffs, NbrOfDigits, CurrElementWithRemovedDigit, GeneratedPower),
+    (NextElement #= CurrElement * Multiplier #/\ GeneratedPower #= 1) #\/ (CurrElement #>= 10 #/\ NextElement #= CurrElementWithRemovedDigit),
+    append(PowersTemp, [GeneratedPower], NewPowers),
     generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, NextCounter, Powers, NewPowers).
 
-generateRestrictedNumberRemoveDigit(Number, Coeffs, NbrOfDigits, NextNumber, PowersList):-
-    Iminus1 #= I - 1,
-    element(I, Coeffs, PowerI),
+generateRestrictedNumberRemoveDigit(Number, Coeffs, NbrOfDigits, NextNumber, Power):-
+    NextNumber #\= Number,
     element(Iminus1, Coeffs, PowerIminus1),
+    PowerI #= PowerIminus1 * 10,
     LeftSide #= Number // PowerI,
     RightSide #= Number mod PowerIminus1,
     NextNumber #= (LeftSide * PowerIminus1 + RightSide),
-    PowersList = [PowerI, PowerIminus1].
+    Power = PowerIminus1.
 
 getDigitsInNumber(0, Nbr, Nbr).
 getDigitsInNumber(Nbr, NbrOfDigits, Temp):-
@@ -56,9 +64,8 @@ getDigitsInNumber(Nbr, NbrOfDigits, Temp):-
     NextTemp #= Temp + 1,
     getDigitsInNumber(NextNbr, NbrOfDigits, NextTemp).
 
-getCoeffs(0, [0|Temp], Temp, _).
-getCoeffs(NbrOfDigits, CoeffsList, Temp, CurrCoef):-
-    append(Temp, [CurrCoef], NewTemp),
-    NextCoef is CurrCoef * 10,
-    NextNbrOfDigits is NbrOfDigits - 1,
-    getCoeffs(NextNbrOfDigits, CoeffsList, NewTemp, NextCoef).
+
+generateCoeffs([_]).
+generateCoeffs([CurrCoeff, NextCoeff | Tail]):-
+    NextCoeff #= CurrCoeff * 10,
+    generateCoeffs([NextCoeff | Tail]). 
