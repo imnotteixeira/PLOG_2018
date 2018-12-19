@@ -1,8 +1,16 @@
 :-use_module(library(clpfd)).
+:-use_module(library(between)).
+
 
 wubalubadubdub(LOL):-
     findall(RIP, main(41, 8, 7, RIP), LOL),
     nl, write('Helllloo').
+
+generate(FirstNumber, AmountOfNumbers, Multiplier):-
+    between(2, 10, FirstNumber),
+    between(2,10, AmountOfNumbers),
+    between(2,10, Multiplier),
+    main(FirstNumber, AmountOfNumbers, Multiplier, ResultList).
 
 main(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
