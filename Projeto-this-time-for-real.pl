@@ -5,7 +5,7 @@
 generate(FirstNumber, AmountOfNumbers, Multiplier):-
     now(T),
     setrand(T),
-    random(2, 10, FirstNumber),
+    random(1, 10, FirstNumber),
     random(2, 7, AmountOfNumbers),
     random(2, 10, Multiplier),
     main(FirstNumber, AmountOfNumbers, Multiplier, ResultList).
