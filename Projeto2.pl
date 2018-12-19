@@ -12,7 +12,7 @@ generate(FirstNumber, AmountOfNumbers, Multiplier):-
 
 generate(A,B,C):- generate(A,B,C).
 
-main(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
+main(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
     length(ResultList, AmountOfNumbers),
     domain(ResultList, 1, Max),
@@ -28,11 +28,13 @@ main(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
     append(Powers, ResultList, Vars),
 
     statistics(runtime, [Start, _]),
-    labeling([max_regret, bisect], Vars),
+    append(O, [time_out(5000, Flag)], Options),
+    labeling(Options, Vars),
+
     statistics(runtime, [End, _]),
-    Time is End - Start,
-    write('Time: '),
-    write(Time).
+    Time is End - Start.
+    % write('Time: '),
+    % write(Time).
 
 getMaxNumber(Max,1,_,Max).
 getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
