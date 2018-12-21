@@ -12,7 +12,7 @@ generate(FirstNumber, AmountOfNumbers, Multiplier):-
     random(1, 10, FirstNumber),
     random(2, 7, AmountOfNumbers),
     random(2, 10, Multiplier),
-    run(FirstNumber, AmountOfNumbers, Multiplier, ResultList).
+    run(FirstNumber, AmountOfNumbers, Multiplier, _).
 
 generate(A,B,C):- generate(A,B,C).
 
@@ -43,7 +43,7 @@ getInput(FirstNumber, AmountOfNumbers, Multiplier):-
     
 
 run(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
-    run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag).
+    run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, [ffc, bisect, up], _, _).
 
 
 run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
@@ -95,7 +95,7 @@ generateNumbers(List, Multiplier, Coeffs, Counter, Powers, PowersTemp):-
 
 generateRestrictedNumberRemoveDigit(Number, Coeffs, NextNumber, Power):-
     NextNumber #\= Number,
-    element(Iminus1, Coeffs, PowerIminus1),
+    element(_, Coeffs, PowerIminus1),
     PowerI #= PowerIminus1 * 10,
     LeftSide #= Number // PowerI,
     RightSide #= Number mod PowerIminus1,
