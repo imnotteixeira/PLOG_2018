@@ -2,17 +2,51 @@
 :-use_module(library(random)).
 :-use_module(library(system)).
 
+getPuzzleInputFromSize(1, 6, 5, 2).
+getPuzzleInputFromSize(2, 9, 8, 2).
+getPuzzleInputFromSize(3, 41, 9, 7).
+
 generate(FirstNumber, AmountOfNumbers, Multiplier):-
     now(T),
     setrand(T),
     random(1, 10, FirstNumber),
     random(2, 7, AmountOfNumbers),
     random(2, 10, Multiplier),
-    main(FirstNumber, AmountOfNumbers, Multiplier, ResultList).
+    run(FirstNumber, AmountOfNumbers, Multiplier, ResultList).
 
 generate(A,B,C):- generate(A,B,C).
 
-main(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
+
+start:-
+    nl,
+    write('Welcome to power strike!'), nl, nl,
+    getInput(FirstNumber, AmountOfNumbers, Multiplier), nl,
+    write('Calculating solution for problem with:'), nl,
+    write('Initial value: '), write(FirstNumber), nl,
+    write('Amount of values: '), write(AmountOfNumbers), nl,
+    write('Multiplier: '), write(Multiplier), nl, nl,
+    run(FirstNumber, AmountOfNumbers, Multiplier, ResultList),
+    write('The result is: '), write(ResultList), nl.
+
+getInput(FirstNumber, AmountOfNumbers, Multiplier):-
+    write('Please insert the puzzle size (1-3): '), nl, nl,
+    write('1 - Small'), nl,
+    write('2 - Medium'), nl,
+    write('3 - Big'), nl,
+    catch(read(PuzzleSize),_,fail),
+    getPuzzleInputFromSize(PuzzleSize, FirstNumber, AmountOfNumbers, Multiplier).
+
+getInput(FirstNumber, AmountOfNumbers, Multiplier):-
+    write('That is not a valid input. Please try again'), nl,
+    getInput(FirstNumber, AmountOfNumbers, Multiplier).
+
+    
+
+run(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
+    run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag).
+
+
+run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
     length(ResultList, AmountOfNumbers),
     domain(ResultList, 1, Max),
