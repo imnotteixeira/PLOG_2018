@@ -4,7 +4,7 @@
 
 getPuzzleInputFromSize(1, 6, 5, 2).
 getPuzzleInputFromSize(2, 9, 8, 2).
-getPuzzleInputFromSize(3, 41, 9, 7).
+getPuzzleInputFromSize(3, 41, 8, 7).
 
 generate(FirstNumber, AmountOfNumbers, Multiplier):-
     now(T),
@@ -43,7 +43,7 @@ getInput(FirstNumber, AmountOfNumbers, Multiplier):-
     
 
 run(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
-    run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, [ffc, bisect, up], _, _).
+    run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, [ff, bisect, up], _, _).
 
 
 run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
