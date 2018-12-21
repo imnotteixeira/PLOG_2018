@@ -58,7 +58,7 @@ run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time
     generateCoeffs(Coeffs),
 
     element(1, ResultList, FirstNumber),!,
-    generateNumbers(ResultList, Multiplier, Coeffs, NbrOfDigits, 1, Powers, []),
+    generateNumbers(ResultList, Multiplier, Coeffs, 1, Powers, []),
     append(Powers, ResultList, Vars),
 
     statistics(runtime, [Start, _]),
@@ -76,24 +76,24 @@ getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
     NextAmount is AmountOfNumbers - 1,
     getMaxNumber(NextNumber, NextAmount, Multiplier, Max).
 
-generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
+generateNumbers(List, Multiplier, Coeffs, Counter, Powers, PowersTemp):-
     length(List, Counter),
     element(Counter, List, LastElement),
     element(1, List, FirstElement),
-    generateRestrictedNumberRemoveDigit(LastElement, Coeffs, NbrOfDigits, LastElementWithRemovedDigit, GeneratedPower),
+    generateRestrictedNumberRemoveDigit(LastElement, Coeffs, LastElementWithRemovedDigit, GeneratedPower),
     (FirstElement #= LastElement * Multiplier #/\ GeneratedPower #= 1) #\/ (LastElement #>= 10 #/\ FirstElement #= LastElementWithRemovedDigit),
     append(PowersTemp, [GeneratedPower], Powers).
 
-generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, Counter, Powers, PowersTemp):-
+generateNumbers(List, Multiplier, Coeffs, Counter, Powers, PowersTemp):-
     element(Counter, List, CurrElement),
     NextCounter is Counter + 1,
     element(NextCounter, List, NextElement),
-    generateRestrictedNumberRemoveDigit(CurrElement, Coeffs, NbrOfDigits, CurrElementWithRemovedDigit, GeneratedPower),
+    generateRestrictedNumberRemoveDigit(CurrElement, Coeffs, CurrElementWithRemovedDigit, GeneratedPower),
     (NextElement #= CurrElement * Multiplier #/\ GeneratedPower #= 1) #\/ (CurrElement #>= 10 #/\ NextElement #= CurrElementWithRemovedDigit),
     append(PowersTemp, [GeneratedPower], NewPowers),
-    generateNumbers(List, Multiplier, Coeffs, NbrOfDigits, NextCounter, Powers, NewPowers).
+    generateNumbers(List, Multiplier, Coeffs, NextCounter, Powers, NewPowers).
 
-generateRestrictedNumberRemoveDigit(Number, Coeffs, NbrOfDigits, NextNumber, Power):-
+generateRestrictedNumberRemoveDigit(Number, Coeffs, NextNumber, Power):-
     NextNumber #\= Number,
     element(Iminus1, Coeffs, PowerIminus1),
     PowerI #= PowerIminus1 * 10,
