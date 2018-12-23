@@ -6,17 +6,8 @@ getPuzzleInputFromSize(1, 6, 5, 2).
 getPuzzleInputFromSize(2, 9, 8, 2).
 getPuzzleInputFromSize(3, 41, 8, 7).
 
-generate(FirstNumber, AmountOfNumbers, Multiplier):-
-    now(T),
-    setrand(T),
-    random(1, 10, FirstNumber),
-    random(2, 7, AmountOfNumbers),
-    random(2, 10, Multiplier),
-    run(FirstNumber, AmountOfNumbers, Multiplier, _).
 
-generate(A,B,C):- generate(A,B,C).
-
-
+%start the program
 start:-
     nl,
     write('Welcome to power strike!'), nl, nl,
@@ -28,6 +19,7 @@ start:-
     run(FirstNumber, AmountOfNumbers, Multiplier, ResultList),
     write('The result is: '), write(ResultList), nl.
 
+%get input for problem solver
 getInput(FirstNumber, AmountOfNumbers, Multiplier):-
     write('Please insert the puzzle size (1-3): '), nl, nl,
     write('1 - Small'), nl,
@@ -41,11 +33,11 @@ getInput(FirstNumber, AmountOfNumbers, Multiplier):-
     getInput(FirstNumber, AmountOfNumbers, Multiplier).
 
     
-
+%run the solver in default mode
 run(FirstNumber, AmountOfNumbers, Multiplier, ResultList):-
     run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, [ff, bisect, up], _, _).
 
-
+%run the solver with helping tools (custom labeling options, runtime)
 run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time, Flag):-
     getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max),
     length(ResultList, AmountOfNumbers),
@@ -70,12 +62,14 @@ run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time
     % write('Time: '),
     % write(Time).
 
+%calculate the max possible number in the problem
 getMaxNumber(Max,1,_,Max).
 getMaxNumber(FirstNumber, AmountOfNumbers, Multiplier, Max):-
     NextNumber is FirstNumber * Multiplier,
     NextAmount is AmountOfNumbers - 1,
     getMaxNumber(NextNumber, NextAmount, Multiplier, Max).
 
+%generate the numbers with problem restrictions
 generateNumbers(List, Multiplier, Coeffs, Counter, Powers, PowersTemp):-
     length(List, Counter),
     element(Counter, List, LastElement),
@@ -93,6 +87,7 @@ generateNumbers(List, Multiplier, Coeffs, Counter, Powers, PowersTemp):-
     append(PowersTemp, [GeneratedPower], NewPowers),
     generateNumbers(List, Multiplier, Coeffs, NextCounter, Powers, NewPowers).
 
+%generate restriction for digit removal
 generateRestrictedNumberRemoveDigit(Number, Coeffs, NextNumber, Power):-
     NextNumber #\= Number,
     element(_, Coeffs, PowerIminus1),
@@ -102,6 +97,8 @@ generateRestrictedNumberRemoveDigit(Number, Coeffs, NextNumber, Power):-
     NextNumber #= (LeftSide * PowerIminus1 + RightSide),
     Power = PowerIminus1.
 
+
+%calculate number of digits in a number
 getDigitsInNumber(0, Nbr, Nbr).
 getDigitsInNumber(Nbr, NbrOfDigits, Temp):-
     NextNbr #= Nbr div 10,
@@ -109,6 +106,7 @@ getDigitsInNumber(Nbr, NbrOfDigits, Temp):-
     getDigitsInNumber(NextNbr, NbrOfDigits, NextTemp).
 
 
+%generate coeffs for usage in decimal powers
 generateCoeffs([_]).
 generateCoeffs([CurrCoeff, NextCoeff | Tail]):-
     NextCoeff #= CurrCoeff * 10,

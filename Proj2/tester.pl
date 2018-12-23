@@ -1,4 +1,4 @@
-:- consult('Projeto2.pl').
+:- consult('PLOG_TP2_Power_Strike_5.pl').
 
 options([leftmost, step, up]).
 options([leftmost, step, down]).
