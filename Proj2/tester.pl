@@ -141,3 +141,48 @@ test_medium(O, T, Flag):-
     main(9, 8, 2, _, O, T, Flag).
 test_big(O, T, Flag):-
     main(41, 8, 7, _, O, T, Flag).
+
+complexity_test_nCells(FirstNumber, Multiplier, EndAmountOfCells, EndAmountOfCells):-
+    
+    run_profiling_mode(FirstNumber, EndAmountOfCells, Multiplier, _, [ff, bisect, up], T, _),
+    format('~d,~d\n', [EndAmountOfCells, T]).
+
+complexity_test_nCells(FirstNumber, Multiplier, StartAmountOfCells, EndAmountOfCells):-
+    run_profiling_mode(FirstNumber, StartAmountOfCells, Multiplier, _, [ff, bisect, up], T, _),
+    format('~d,~d\n', [StartAmountOfCells, T]),
+    NextAmount is StartAmountOfCells + 1,
+    complexity_test_nCells(FirstNumber, Multiplier, NextAmount, EndAmountOfCells).
+complexity_test_nCells(FirstNumber, Multiplier, StartAmountOfCells, EndAmountOfCells):-
+    NextAmount is StartAmountOfCells + 1,
+    complexity_test_nCells(FirstNumber, Multiplier, NextAmount, EndAmountOfCells).
+
+complexity_test_multiplier(FirstNumber, EndMultiplier, EndMultiplier, AmountOfCells):-
+    
+    run_profiling_mode(FirstNumber, AmountOfCells, EndMultiplier, _, [ff, bisect, up], T, _),
+    % format(user_error, '~d,~d\n', [EndMultiplier, T]).
+    format('~d,~d\n', [EndMultiplier, T]).
+
+complexity_test_multiplier(FirstNumber, FirstMultiplier, EndMultiplier, AmountOfCells):-
+    run_profiling_mode(FirstNumber, AmountOfCells, FirstMultiplier, _, [ff, bisect, up], T, _),
+    % format(user_error, '~d,~d\n', [FirstMultiplier, T]),
+    format('~d,~d\n', [FirstMultiplier, T]),
+    NextAmount is FirstMultiplier + 1,
+    complexity_test_multiplier(FirstNumber, NextAmount, EndMultiplier, AmountOfCells).
+complexity_test_multiplier(FirstNumber, FirstMultiplier, EndMultiplier, AmountOfCells):-
+    NextAmount is FirstMultiplier + 1,
+    complexity_test_multiplier(FirstNumber, NextAmount, EndMultiplier, AmountOfCells).
+
+complexity_test_start(EndNumber, EndNumber, Multiplier, AmountOfCells):-
+    
+    run_profiling_mode(EndNumber, AmountOfCells, Multiplier, _, [ff, bisect, up], T, _),
+    format('~d,~d\n', [EndNumber, T]).
+
+complexity_test_start(FirstNumber, EndNumber, Multiplier, AmountOfCells):-
+    run_profiling_mode(FirstNumber, AmountOfCells, Multiplier, _, [ff, bisect, up], T, _),
+    format('~d,~d\n', [FirstNumber, T]),
+    NextAmount is FirstNumber + 1,
+    complexity_test_start(NextAmount, EndNumber, Multiplier, AmountOfCells).
+complexity_test_start(FirstNumber, EndNumber, Multiplier, AmountOfCells):-
+    NextAmount is FirstNumber + 1,
+    complexity_test_start(NextAmount, EndNumber, Multiplier, AmountOfCells).
+

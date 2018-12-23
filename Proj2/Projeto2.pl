@@ -62,7 +62,7 @@ run_profiling_mode(FirstNumber, AmountOfNumbers, Multiplier, ResultList, O, Time
     append(Powers, ResultList, Vars),
 
     statistics(runtime, [Start, _]),
-    append(O, [time_out(5000, Flag)], Options),
+    append(O, [time_out(20000, Flag)], Options),
     labeling(Options, Vars),
 
     statistics(runtime, [End, _]),
